@@ -1,17 +1,69 @@
-import React from 'react'
-
+import React, { useContext } from 'react'
+import AppContext from './context/appContext'
+import { useState, useEffect } from 'react'
 const Home = () => {
+    const { getTransactions } = useContext(AppContext)
+    const [transactions, settransactions] = useState([])
+    const [loading, setLoading] = useState(true)
+    const fetchTransactions = async () => {
+        let fetchedTransactions = await getTransactions()
+        settransactions(fetchedTransactions)
+        setLoading(false)
+    }
+    useEffect(() => {
+        fetchTransactions()
+
+    }, [])
+
+    const totalCash = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType == "cash" })
+        let sumWithInitial = cashTransactions.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.cashPrice,
+            0,
+        );
+        return sumWithInitial
+    }
+    const remainingInstalments = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
+        let sumWithInitial = cashTransactions.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.installments.reduce((accumulator, currentValue) => accumulator + currentValue, 0),
+            0,
+        );
+        return sumWithInitial
+    }
+
+
+    const cashTransactions = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType == "cash" })
+        return cashTransactions.length
+    }
+
+    const instalmentTransactions = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
+        return cashTransactions.length
+    }
+
+    console.log(transactions);
+
     return (
         <>
-            <div>
+            <h1 className="px-4">Admin Dashboard</h1>
 
-                <h1 className="px-4">Admin Dashboard</h1>
+            {loading ? <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "50vh" }}
+            >
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div> : <div>
+
                 <div className="container-fluid py-5">
                     <div className="row">
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>10</h1>
+                                    <h1>{transactions.length}</h1>
                                 </div>
                                 <div className="card-body">
                                     <h3 className='fw-normal'>Total Customers</h3>
@@ -21,7 +73,7 @@ const Home = () => {
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>83</h1>
+                                    <h1>{transactions.length}</h1>
                                 </div>
                                 <div className="card-body">
                                     <h3 className='fw-normal'>Total Transactions</h3>
@@ -31,7 +83,10 @@ const Home = () => {
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>PKR 88,000</h1>
+                                    <h1>{totalCash().toLocaleString("en-US", {
+                                        style: "currency", currency: "PKR", minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    })}</h1>
                                 </div>
                                 <div className="card-body">
                                     <h3 className='fw-normal'>Total Cash</h3>
@@ -41,7 +96,10 @@ const Home = () => {
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>PKR 22,000</h1>
+                                    <h1>{remainingInstalments().toLocaleString("en-US", {
+                                        style: "currency", currency: "PKR", minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    })}</h1>
                                 </div>
                                 <div className="card-body">
                                     <h3 className='fw-normal'>Remaining Instalments</h3>
@@ -51,17 +109,17 @@ const Home = () => {
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>4</h1>
+                                    <h1>{instalmentTransactions()}</h1>
                                 </div>
                                 <div className="card-body">
-                                    <h3 className='fw-normal'>Instalment Customers</h3>
+                                    <h3 className='fw-normal'>Instalments Customers</h3>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 col-12 my-2">
                             <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
-                                    <h1>4</h1>
+                                    <h1>{cashTransactions()}</h1>
                                 </div>
                                 <div className="card-body">
                                     <h3 className='fw-normal'>Cash Customers</h3>
@@ -71,7 +129,8 @@ const Home = () => {
                     </div>
                 </div>
 
-            </div>
+            </div>}
+
         </>
     )
 }

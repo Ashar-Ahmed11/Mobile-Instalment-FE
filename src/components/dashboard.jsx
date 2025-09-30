@@ -9,23 +9,51 @@ import {
 } from "react-router-dom";
 
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AdminLinks from "./adminLinks";
 import Home from "./home";
 import Transaction from "./transaction";
 import Users from "./users";
+import Product from "./product";
+import ViewProducts from "./ViewProducts";
+import UpdateProducts from "./updateProducts";
+import UpdateTransaction from "./UpdateTransaction";
+import Pdf from "./PDF";
 
 
 // import { useEffect } from "react";
 const Dashboard = () => {
+
+
+
   const location = useLocation();
 
   const history = useHistory()
 
+useEffect(() => {
+  if (location.state?.justLoggedIn) {
+    toast.success("You are logged in", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
 
-  // if (!authToken) {
-  //     history.push('/sign-in')
-  // }
+    // Clear the state so it doesn't trigger on refresh
+    history.replace("/dashboard");
+  }
+}, [location, history]);
+
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      history.push("/admin"); // redirect if not logged in
+    }
+  }, [history]);
 
 
 
@@ -125,7 +153,11 @@ const Dashboard = () => {
                   <li>
                     <a className="dropdown-item" href="#">
                       {/* <ConnectKitButton showAvatar={false} /> */}
-                      <button onClick={()=>history.push("/admin")} className="btn btn-danger w-100">Log Out</button>
+                      <button onClick={()=>{
+                        localStorage.removeItem('authToken')
+                       history.push("/admin", { logout: true })
+
+                      }} className="btn btn-danger w-100">Log Out</button>
 
                     </a>
                   </li>
@@ -177,11 +209,25 @@ const Dashboard = () => {
               <Route exact path="/dashboard/users">
                 <Users />
               </Route>
+              <Route exact path="/dashboard/products">
+                <Product />
+              </Route>
+              <Route exact path="/dashboard/view-products">
+                <ViewProducts />
+              </Route>
+              <Route exact path="/dashboard/update-products/:id">
+                <UpdateProducts />
+              </Route>
+              <Route exact path="/dashboard/update-transactions/:id">
+                <UpdateTransaction />
+              </Route>
+             
             </Switch>
           </div>
 
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

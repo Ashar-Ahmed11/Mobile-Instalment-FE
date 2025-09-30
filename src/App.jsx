@@ -2,15 +2,24 @@ import logo from './logo.svg';
 import './App.css';
 import { useContext } from 'react';
 import AppContext from './components/context/appContext';
-import { Switch, Route, Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { Switch, Route, Link, useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Admin from './components/admin';
 import Dashboard from './components/dashboard';
-
+import Pdf from './components/PDF';
+import { useEffect } from 'react';
 function App() {
   const context = useContext(AppContext)
   const { helloworld } = context
   console.log(helloworld);
   const history = useHistory()
+  const location = useLocation()
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+  //  if(location.pathname!=="/"){
+  //   history.push("/")
+  //  }
+   
+  }, [location.pathname])
 
   return (
     <>
@@ -28,27 +37,29 @@ function App() {
 
 
           <Route path="/" exact>
-           {()=>{
-            history.push('/dashboard')
-            return(
-              null
-            )
-           }}
+            {() => {
+              history.push('/dashboard')
+              return (
+                null
+              )
+            }}
+            {/* <div class="alert alert-danger" role="alert">
+              Trial Period Expired!
+            </div> */}
           </Route>
 
           <Route path="/dashboard"  >
             <Dashboard />
           </Route>
 
+          <Route exact path="/pdf/:id">
+            <Pdf />
+          </Route>
+
           <Route path="/admin" exact>
             <Admin />
           </Route>
-          <Route path="/about" exact>
-            <h1 className="text-center">About Component</h1>
-          </Route>
-          <Route path="/users" exact>
-            <h1 className="text-center">Users Component</h1>
-          </Route>
+
         </Switch>
       </div>
 

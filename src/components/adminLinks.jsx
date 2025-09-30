@@ -43,6 +43,26 @@ const AdminLinks = ({mobile}) => {
                     <span className="ms-1 text-light">Users</span>
                 </Link>
             </li>
+            <li  data-bs-dismiss={mobile&&"offcanvas"} className="nav-item w-100 py-2">
+                <Link
+              
+                    to="/dashboard/products"
+                    className={`customlinks nav-link ${location.pathname.startsWith("/dashboard/products") ? "active" : ""}`}
+                >
+                    <i className="fs-4 bi-house"></i>{" "}
+                    <span className="ms-1 text-light">Create Products</span>
+                </Link>
+            </li>
+            <li  data-bs-dismiss={mobile&&"offcanvas"} className="nav-item w-100 py-2">
+                <Link
+              
+                    to="/dashboard/view-products"
+                    className={`customlinks nav-link ${location.pathname.startsWith("/dashboard/view-products") ? "active" : ""}`}
+                >
+                    <i className="fs-4 bi-house"></i>{" "}
+                    <span className="ms-1 text-light">View Products</span>
+                </Link>
+            </li>
             
      
         </>

@@ -5,13 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import AppState from './components/context/appState';
+import { HelmetProvider } from "react-helmet-async";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
+    <HelmetProvider>
     <AppState>
       <App />
     </AppState>
+    </HelmetProvider>
   </BrowserRouter>
 );
 
