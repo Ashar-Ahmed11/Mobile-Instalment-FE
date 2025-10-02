@@ -56,7 +56,7 @@ useEffect(() => {
 ) : (
   <div className="row">
     {products && products.length > 0 ? (
-      products.map((product, i) => (
+      products.reverse().map((product, i) => (
         <div className="col-md-4 mb-4" key={i}>
           <Link
             to={`/dashboard/update-products/${product._id}`} 

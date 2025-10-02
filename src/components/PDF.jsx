@@ -58,11 +58,11 @@ function Pdf() {
         <div className="text-center mb-4">
           <h1 className="fw-bold h3 pt-3">Kamran Mobile Zone & Electronics</h1>
           <p>شاپ نمبر 39، فرسٹ فلور المسلم پلازہ,<br />ترانفارمر چوک، صادق آباد، راولپنڈی</p>
-          <p className="pt-1">Ph: 0312-9071455, 0330-6033470</p>
-          {/* <p className="opacity-75">{pdfData?._id}</p> */}
+          <p style={{ fontSize: "13px" }} className="pt-1">Ph: 0312-9071455, 0330-6033470</p>
+          {/* <p style={{fontSize:"13px"}} className="opacity-75">{pdfData?._id}</p> */}
         </div>
         <div className="d-flex justify-content-end px-2">
-          <p className="mb-1">
+          <p style={{ fontSize: "13px" }} className="mb-1">
             <strong>Date:</strong>{" "}
             {pdfData?.date ? new Date(pdfData.date).toLocaleDateString() : ""}
           </p>
@@ -147,27 +147,85 @@ function Pdf() {
           </table>
         </div>}
 
+        {pdfData.transactionType === "instalments" && <div className="py-3">
+          <table className="table table-bordered">
+            <thead className="table-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Installment Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pdfData.installments && pdfData.installments.length > 0 ? (
+                pdfData.installments.map((inst, i) => (
+                  <tr key={i}>
+                    <td>{i + 1}</td>
+                    <td>{inst.amount} PKR</td>
+                    <td>{inst.status}</td>
+                    <td>
+                      {inst.date
+                        ? new Date(inst.date).toLocaleDateString("en-GB") // ✅ dd/mm/yyyy format
+                        : "—"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">
+                    No installments available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>}
+
+
         {pdfData.transactionType === "instalments" && <div className="row">
-          <div className="col-6"></div>
+          <div className="col-6">
+            <div>
+              <h5 className="fw-bold mb-2">Notes</h5>
+              <p style={{ fontSize: "13px" }} className="opacity-75">
+                1.  Kamran mobile zone & electronics is not responsible in case of PTA claim and mobile warranty claim.
+              </p>
+              <p style={{ fontSize: "13px" }} className="opacity-75">
+                2. Companies claim centres will be responsible for any issue.
+              </p>
+              <p style={{ fontSize: "13px" }} className="opacity-75">
+                3. Items once sold cannot be taken back.
+              </p>
+
+            </div>
+          </div>
           <div className="col-6 p-1">
             <div className='h-100 p-3 border border-dark rounded-4 flex-column d-flex justify-content-center'>
               <div className="d-flex justify-content-between align-items-center">
-                <span className=" fw-bold">Total</span>
-                <span className=" ">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en") : pdfData?.installmentPrice?.toLocaleString("en")} PKR</span>
+                <span className=" fw-bold">Cash price</span>
+                <span className=" ">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en-PK", { style: "currency", currency: "PKR" }) : pdfData?.installmentPrice?.toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
               </div>
               {pdfData.transactionType === "instalments" && (<div className="d-flex justify-content-between">
-                <span className=" fw-bold">Remaining Instalment</span>
-                <span className=" opacity-75">{(pdfData?.installmentPrice - pdfData?.advanceInstalment).toLocaleString("en")} PKR</span>
+                <span className=" fw-bold">Installment price</span>
+                <span className=" opacity-75">{(pdfData?.installmentPrice - pdfData?.advanceInstalment).toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
               </div>)}
               <div className="d-flex justify-content-between">
-                <span className=" fw-bold">{pdfData?.cashPrice ? "Sub Total" : "Instalment Advance"}</span>
-                <span className=" opacity-75">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en") : pdfData?.advanceInstalment?.toLocaleString("en")} PKR</span>
+                <span className=" fw-bold">{pdfData?.cashPrice ? "Sub Total" : "Advance"}</span>
+                <span className=" opacity-75">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en-PK", { style: "currency", currency: "PKR" }) : pdfData?.advanceInstalment?.toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
+              </div>
+              <div className="d-flex justify-content-between">
+                <span className=" fw-bold">Remaining balance</span>
+                <span className=" opacity-75">{pdfData?.installments?.filter(ins => ins.status !== "Paid") // ✅ only Pending
+                  .reduce((acc, ins) => acc + ins.amount, 0) // ✅ sum remaining
+                  .toLocaleString("en-PK", { style: "currency", currency: "PKR" })}</span>
               </div>
             </div>
           </div>
         </div>}
-        {pdfData.transactionType === "cash" && <div className="row">
-          <div className="col-6"></div>
+        {pdfData.transactionType === "cash" && <> <div className="row">
+          <div className="col-6">
+
+          </div>
           <div className="col-6 p-1">
             <div className='h-100 p-3 border border-dark rounded-4 flex-column d-flex justify-content-center'>
               <div className="d-flex justify-content-between">
@@ -185,22 +243,24 @@ function Pdf() {
 
             </div>
           </div>
-        </div>}
-
-        {/* Notes */}
-        <div>
-          <h5 className="fw-bold mb-2">Notes</h5>
-          <p className="opacity-75">
-            1. Kamran Mobile Zone & Electronics is not responsible for any warranty.
-          </p>
-          <p className="opacity-75">
-            2. For warranty claim please contact to the related claim.
-          </p>
-          <p className="opacity-75">
-            3. Goods once sold can not be taken.
-          </p>
-
         </div>
+          <div>
+            <h5 className="fw-bold mb-2">Notes</h5>
+            <p  className="opacity-75">
+              1.  Kamran mobile zone & electronics is not responsible in case of PTA claim and mobile warranty claim.
+            </p>
+            <p  className="opacity-75">
+              2. Companies claim centres will be responsible for any issue.
+            </p>
+            <p  className="opacity-75">
+              3. Items once sold cannot be taken back.
+            </p>
+
+          </div>
+        </>
+        }
+        {/* Notes */}
+
       </div>
     </>
   );

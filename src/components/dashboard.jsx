@@ -20,6 +20,7 @@ import ViewProducts from "./ViewProducts";
 import UpdateProducts from "./updateProducts";
 import UpdateTransaction from "./UpdateTransaction";
 import Pdf from "./PDF";
+import RecyclePage from "./RecyclePage";
 
 
 // import { useEffect } from "react";
@@ -220,6 +221,12 @@ useEffect(() => {
               </Route>
               <Route exact path="/dashboard/update-transactions/:id">
                 <UpdateTransaction />
+              </Route>
+              <Route exact path="/dashboard/update-transactions/:id">
+                <UpdateTransaction />
+              </Route>
+              <Route exact path="/dashboard/recycle">
+                <RecyclePage />
               </Route>
              
             </Switch>

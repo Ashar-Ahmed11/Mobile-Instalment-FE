@@ -24,13 +24,24 @@ const Home = () => {
         return sumWithInitial
     }
     const remainingInstalments = () => {
-        let cashTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
-        let sumWithInitial = cashTransactions.reduce(
-            (accumulator, currentValue) => accumulator + currentValue.installments.reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-            0,
+        let cashTransactions = transactions.filter(
+            (e) => e.transactionType !== "cash"
         );
-        return sumWithInitial
-    }
+
+        let sumWithInitial = cashTransactions.reduce((accumulator, txn) => {
+            return (
+                accumulator +
+                txn.installments.reduce(
+                    (sum, inst) =>
+                        inst.status === "Pending" ? sum + (Number(inst.amount) || 0) : sum,
+                    0
+                )
+            );
+        }, 0);
+
+        return sumWithInitial;
+    };
+
 
 
     const cashTransactions = () => {

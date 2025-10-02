@@ -136,7 +136,7 @@ const UpdateProducts = () => {
           onChange={handleChange}
           required
         />
-        <input
+        {/* <input
           type="text"
           name="productType"
           placeholder="Product Type"
@@ -144,7 +144,7 @@ const UpdateProducts = () => {
           value={formData.productType}
           onChange={handleChange}
           required
-        />
+        /> */}
 
         <div className="input-group my-3">
           <input

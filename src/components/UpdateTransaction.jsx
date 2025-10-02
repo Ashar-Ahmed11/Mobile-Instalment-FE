@@ -20,6 +20,10 @@ const UpdateTransaction = () => {
   const [DeviceCash, setDeviceCash] = useState(null);
   const [loading, setLoading] = useState(false);
   const [advanceInstalment, setAdvanceInstalment] = useState(null);
+  const [ProductDetails, setProductDetails] = useState(null);
+  const [recycle, setRecycle] = useState(false);
+  const [Product, setProduct] = useState(null);
+  const [txn, setTxn] = useState({});
 
   // User Info
   const [userInfo, setUserInfo] = useState({
@@ -48,6 +52,8 @@ const UpdateTransaction = () => {
         setLoading(true);
         const txn = await getTransactionById(id);
         setAdvanceInstalment(txn.advanceInstalment)
+        setTxn(txn)
+
         console.log("Transaction fetched:", txn);
 
         if (txn) {
@@ -71,11 +77,13 @@ const UpdateTransaction = () => {
 
           // Prefill product & payment info
           setProductType(txn.productType);
+          setProduct(txn.productType);
           setPaymentMethod(txn.transactionType || "cash");
           setInstalments(txn.installments || []);
           setDeviceCash(txn.cashPrice || null);
           setMobileCost(txn.installmentPrice || null);
           setInstalmentDuration(txn.installments?.length || 12);
+          setProductDetails(txn.productDetails || null);
         }
       } catch (err) {
         console.error("Error fetching transaction:", err);
@@ -88,16 +96,29 @@ const UpdateTransaction = () => {
   }, [id]);
 
   // Create instalments dynamically
-  const createInstalment = (value, insDuration) => {
-    let subCost = Number(value) - advanceInstalment
-    let newCost = subCost / insDuration;
-    let arr = [];
-    for (let index = 0; index < insDuration; index++) {
-      arr.push(newCost);
-    }
-    setInstalments(arr);
-    setInstalmentDuration(insDuration);
-  };
+ const createInstalment = (value, insDuration) => {
+  const subCost = Number(value || 0) - Number(advanceInstalment || 0);
+  const newCost = subCost / insDuration;
+
+  let arr = [];
+  let startDate = new Date();
+
+  for (let index = 0; index < insDuration; index++) {
+    let dueDate = new Date(startDate);
+    dueDate.setMonth(startDate.getMonth() + (index + 1)); // month 1 = next month
+
+    arr.push({
+      amount: newCost,
+      status: "Pending",
+      date: dueDate,   // ✅ add date
+    });
+  }
+
+  setInstalments(arr);
+  setInstalmentDuration(insDuration);
+};
+
+
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -155,11 +176,12 @@ const UpdateTransaction = () => {
       }));
     }
   };
-  useEffect(() => {
-    if (mobileCost > 0 && advanceInstalment !== null) {
-      createInstalment(mobileCost, instalmentDuration);
-    }
-  }, [advanceInstalment, mobileCost, instalmentDuration]);
+useEffect(() => {
+  if (mobileCost > 0 && advanceInstalment !== null && instalments.length === 0) {
+    createInstalment(mobileCost, instalmentDuration);
+  }
+}, [advanceInstalment, mobileCost, instalmentDuration]);
+
 
   const handleGranterChange = (e) => {
     const { name, value, files } = e.target;
@@ -173,7 +195,7 @@ const UpdateTransaction = () => {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (forceRecycle) => {
     setLoading(true);
     const transactionObject = {
       ...userInfo,
@@ -182,12 +204,14 @@ const UpdateTransaction = () => {
       granterCnicNumber: granterInfo.cnicNumber,
       granterAddress: granterInfo.address,
       granterImage: granterInfo.image,
-      productType: ProductType,
+      productType: Product,
+      productDetails: ProductDetails,
       advanceInstalment: advanceInstalment,
       transactionType: paymentMethod,
       installments: paymentMethod === "instalments" ? instalments : [],
       cashPrice: DeviceCash,
       installmentPrice: mobileCost,
+      recycled: forceRecycle,
       date: new Date(),
     };
 
@@ -219,7 +243,7 @@ const UpdateTransaction = () => {
             <h3 className='py-4'>User Information</h3>
             <input name="fullName" value={userInfo.fullName} onChange={handleUserChange} type="text" placeholder='Full Name' className="my-2 form-control" />
             <input name="contactNumber" value={userInfo.contactNumber} onChange={handleUserChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
-            <input name="cnicNumber" value={userInfo.cnicNumber} onChange={handleUserChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />
+            {txn.transactionType == "instalments" &&<input name="cnicNumber" value={userInfo.cnicNumber} onChange={handleUserChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />}
             <input name="address" value={userInfo.address} onChange={handleUserChange} type="text" placeholder='Address' className="my-2 form-control" />
             <div className="input-group mb-3">
               <input name="image" onChange={handleUserChange} type="file" className="form-control" />
@@ -229,6 +253,7 @@ const UpdateTransaction = () => {
               <img src={userInfo.image} alt="User" style={{ maxWidth: "150px", borderRadius: "8px" }} />
             )}
 
+            {txn.transactionType == "instalments" && <>
             <h3 className='py-4'>Guarantor Information</h3>
             <input name="fullName" value={granterInfo.fullName} onChange={handleGranterChange} type="text" placeholder='Full Name' className="my-2 form-control" />
             <input name="contactNumber" value={granterInfo.contactNumber} onChange={handleGranterChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
@@ -241,34 +266,56 @@ const UpdateTransaction = () => {
             {granterInfo.image && (
               <img src={granterInfo.image} alt="Granter" style={{ maxWidth: "150px", borderRadius: "8px" }} />
             )}
+            </>}
 
             <h3 className='py-4'>Product Type</h3>
-            {/* Optional search box – uncomment if you still want search */}
+         <input 
+  type="text" 
+  placeholder="Search products..." 
+  value={searchQuery} 
+  onChange={(e) => handleSearch(e.target.value)}
+  className="form-control my-2"
+/>     {/* Optional search box – uncomment if you still want search */}
 
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="form-control my-2"
-            />
+           {searchQuery.trim() && filteredProducts.length > 0 && (
+  <ul className="list-group my-2">
+    {filteredProducts.map(product => (
+      <li 
+        key={product._id} 
+        className={`list-group-item ${ProductType === product._id ? 'active' : ''}`}
+        onClick={() => { setProductName(product.productName); setProduct(product); handleSearch("")}}
+        style={{ cursor: "pointer" }}
+      >
+        {product.productName} - {product.wholesalerName} ({product.productType})
+      </li>
+    ))}
+  </ul>
+)}
+
+{Product && (
+  <div className="list-group my-2">
+    <div 
+      className="list-group-item active d-flex justify-content-between align-items-center"
+      style={{ cursor: "pointer" }}
+    >
+      <span>
+  Product Name: <b>{Product.productName}</b> <br />
+  Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
+  Wholesaler Name: {Product.wholesalerName}
+</span>
+
+      <button 
+        type="button" 
+        className="btn-close" 
+        aria-label="Close"
+        onClick={() => {setProduct(null); }} // your close handler
+        style={{ filter: "invert(38%) sepia(89%) saturate(7500%) hue-rotate(0deg) brightness(90%) contrast(120%)" }}
+      ></button>
+    </div>
+  </div>
+)}
 
 
-            <ul className="list-group my-2">
-
-              <li
-
-                className={`list-group-item ${'active'}`}
-                onClick={() => {
-                  setProductType(ProductType._id);
-                  setProductName(ProductType.productName);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                {ProductType.productName} - {ProductType.wholesalerName} ({ProductType.productType})
-              </li>
-
-            </ul>
 
 
             <h3 className='py-4'>{ProductName ? ProductName : "Product"} Information</h3>
@@ -291,9 +338,17 @@ const UpdateTransaction = () => {
               placeholder="Cash Price"
               className="my-2 form-control"
             />
+<textarea
+          name="productDescription"
+          placeholder="Product Details"
+          className="form-control"
+          value={ProductDetails || ""}
 
+          onChange={({ target: { value } })=>{setProductDetails(value)}}
+          // required
+        />
 
-            <h3 className='py-4'>Payment Method</h3>
+            {/* <h3 className='py-4'>Payment Method</h3>
             <div className="d-flex">
               <button
                 disabled={mobileCost <= 0 || loading}
@@ -309,7 +364,8 @@ const UpdateTransaction = () => {
               >
                 Cash
               </button>
-            </div>
+            </div> */}
+            
             {paymentMethod === "instalments" && <input
               onChange={({ target: { value } }) => {
                 setAdvanceInstalment(Number(value));
@@ -324,31 +380,74 @@ const UpdateTransaction = () => {
               className="my-2 form-control"
             />}
 
-            {(paymentMethod === "instalments" && mobileCost > 0) &&
-              <>
-                <h3 className='py-4'>Instalments Duration</h3>
-                <div className='py-4'>
-                  {instalmentArray.filter((e, i) => i !== 0).map((e, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { createInstalment(mobileCost, i + 2) }}
-                      className={`btn btn-${instalmentDuration === i + 2 ? "primary" : "outline-primary"} m-2`}
-                    >
-                      1 - {i + 2} Months
-                    </button>
-                  ))}
-                </div>
-              </>
-            }
+            {paymentMethod === "instalments" && mobileCost > 0 && (
+  <>
+    <h3 className="py-4">Instalment Duration</h3>
+    <div className="py-2">
+      <button
+        className="btn btn-primary m-2"
+        disabled
+      >
+        {instalmentDuration + 1} Months
+      </button>
+    </div>
+  </>
+)}
 
-            <div className='py-4'>
-              {(paymentMethod === "instalments" && mobileCost > 0) && instalments.map((e, i) => (
-                <div key={i} className='d-flex align-items-center'>
-                  <span className='px-2 fw-bold'>{i + 1}</span>
-                  <input value={e} onChange={({ target: { value } }) => { instalments[i] = Number(value); setInstalments([...instalments]) }} type="number" placeholder='Instalment' className="my-2 form-control" />
-                </div>
-              ))}
-            </div>
+
+           <div className="py-4">
+  {(paymentMethod === "instalments" && mobileCost > 0) &&
+    instalments.map((e, i) => {
+      const dueDateStr = new Date(e.date).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+
+      return (
+        <div key={i} className="d-flex align-items-center w-100 mb-2">
+          {/* Index */}
+          <span className="px-2 fw-bold">{i + 1}</span>
+
+          {/* Amount input */}
+          <input
+            value={e.amount}
+            onChange={({ target: { value } }) => {
+              const updated = [...instalments];
+              updated[i].amount = Number(value) || 0;
+              setInstalments(updated);
+            }}
+            type="number"
+            placeholder="Installment"
+            className="my-2 form-control mx-2"
+          />
+
+          {/* Date (read only) */}
+          <span className="form-control mx-2 bg-light">
+            {dueDateStr}
+          </span>
+
+          {/* Status toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              const updated = [...instalments];
+              updated[i].status =
+                updated[i].status === "Paid" ? "Pending" : "Paid";
+              setInstalments(updated);
+            }}
+            className={`btn mx-2 ${
+              e.status === "Paid" ? "btn-success" : "btn-outline-success"
+            }`}
+          >
+            {e.status === "Paid" ? "Paid" : "Pending"}
+          </button>
+        </div>
+      );
+    })}
+</div>
+
+
 
             <div className="d-flex justify-content-end">
               <button
@@ -372,7 +471,7 @@ const UpdateTransaction = () => {
                 Delete Transaction
               </button>
               <button
-                onClick={handleUpdate}
+                onClick={()=>{handleUpdate(false)}}
                 className="btn btn-outline-success"
                 disabled={loading}
               >
@@ -418,7 +517,9 @@ const UpdateTransaction = () => {
                       className="btn btn-danger"
                       onClick={async () => {
                         setModal(false);
-                        await deleteTransaction(id)
+                        // await deleteTransaction(id)
+                        setRecycle(true)
+                        await handleUpdate(true)
                         history.push("/dashboard/users")
                         //   setNotify(true)
 

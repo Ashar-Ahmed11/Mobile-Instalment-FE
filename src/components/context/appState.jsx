@@ -29,7 +29,7 @@ const [pdfData, setPdfdata] = useState(false);
 
 const loggedIn = async (username, password)=> {
   try {
-    const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/auth/login", {
+    const response = await fetch("http://localhost:8000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -54,7 +54,7 @@ const loggedIn = async (username, password)=> {
 
 const getProducts = async () => {
     try {
-        const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/get-product/");
+        const response = await fetch("http://localhost:8000/api/product/get-product/");
         const data = await response.json(); // assuming your API returns JSON
             console.log("📦 API response:", data); 
         setProducts(data); // save all products
@@ -70,36 +70,36 @@ useEffect(() => {
 
 
 const createTransaction = async (transactionObject) => {
-   
+  try {
+    const response = await fetch("http://localhost:8000/api/transaction/create-transaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(transactionObject)
+    });
 
-    try {
-        const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/create-transaction", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(transactionObject)
-        });
+    const data = await response.json();
 
-        const data = await response.json();
-
-        if (data.success) {
-            console.log("Transaction created:", data.transaction);
-            // alert("Transaction created successfully!");
-        } else {
-            console.error("Error creating transaction:", data.message);
-            alert("Failed to create transaction: " + data.message);
-        }
-    } catch (err) {
-        console.error("Server error:", err);
-        alert("Server error: " + err.message);
+    if (data.success) {
+      console.log("Transaction created:", data.transaction);
+      return data.transaction;  // ✅ return created transaction
+    } else {
+      console.error("Error creating transaction:", data.message);
+      alert("Failed to create transaction: " + data.message);
+      return null;
     }
+  } catch (err) {
+    console.error("Server error:", err);
+    alert("Server error: " + err.message);
+    return null;
+  }
 };
 
 
 const handleCreateProduct = async (formData) => {
   try {
-    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/create-products", {
+    const res = await fetch("http://localhost:8000/api/product/create-products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const handleCreateProduct = async (formData) => {
 
    const fetchProduct = async (id) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/getproductbyid/${id}`);
+    const res = await fetch(`http://localhost:8000/api/product/getproductbyid/${id}`);
     if (!res.ok) throw new Error("Failed to fetch product");
     
     const data = await res.json();
@@ -149,7 +149,7 @@ const handleCreateProduct = async (formData) => {
 
 const updateProduct = async (id, updatedData) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/update-product/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/product/update-product/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -176,7 +176,7 @@ const updateProduct = async (id, updatedData) => {
 // inside AppContext (or wherever you keep your API functions)
 const deleteProduct = async (id) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/deleted-product/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/product/deleted-product/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -204,7 +204,7 @@ const deleteProduct = async (id) => {
 // In AppContext or a service file
 const getTransactions = async () => {
   try {
-    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-transactions", {
+    const res = await fetch("http://localhost:8000/api/transaction/get-transactions", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -230,7 +230,7 @@ const getTransactions = async () => {
 // Get transaction by ID
 const getTransactionById = async (id) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-transaction/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/transaction/get-transaction/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -254,7 +254,7 @@ const getTransactionById = async (id) => {
 
 const updateTransaction = async (id, updatedData) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/update-transactions/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/transaction/update-transactions/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -278,7 +278,7 @@ const updateTransaction = async (id, updatedData) => {
 
  const deleteTransaction = async (id) => {
   try {
-    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/delete-transactions/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/transaction/delete-transactions/${id}`, {
       method: "DELETE",
     });
 
@@ -295,9 +295,58 @@ const updateTransaction = async (id, updatedData) => {
   }
 };
 
+const getRecycledTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-recycled-transactions");
+    const data = await res.json();
+    if (data.success) {
+      return data.transactions;
+    }
+    return [];
+  } catch (err) {
+    console.error("Error fetching recycled transactions:", err);
+    return [];
+  }
+};
+
+// Fetch only cash transactions
+const getCashTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-cash-transactions");
+    const data = await res.json();
+    if (data.success) {
+      return data.transactions;
+    } else {
+      console.error("Failed to fetch cash transactions:", data.message);
+      return [];
+    }
+  } catch (err) {
+    console.error("Error fetching cash transactions:", err);
+    return [];
+  }
+};
+
+// Fetch only instalment transactions
+const getInstalmentTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-instalment-transactions");
+    const data = await res.json();
+    if (data.success) {
+      return data.transactions;
+    } else {
+      console.error("Failed to fetch instalment transactions:", data.message);
+      return [];
+    }
+  } catch (err) {
+    console.error("Error fetching instalment transactions:", err);
+    return [];
+  }
+};
+
+
     
     return (
-        <AppContext.Provider value={{helloworld,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, formData,notify,setNotify, setFormData,updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
+        <AppContext.Provider value={{helloworld,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, formData,notify,setNotify, setFormData,updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
             {props.children}
         </AppContext.Provider>
     )
