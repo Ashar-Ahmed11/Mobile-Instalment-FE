@@ -207,7 +207,7 @@ useEffect(() => {
               </Route>
             </Switch>
             <Switch>
-              <Route exact path="/dashboard/users/:filter">
+              <Route exact path="/dashboard/users/:filter/:subfilter?">
                 <Users />
               </Route>
               <Route exact path="/dashboard/products">
