@@ -319,20 +319,22 @@ useEffect(() => {
 
 
             <h3 className='py-4'>{ProductName ? ProductName : "Product"} Information</h3>
-            <input
+           {paymentMethod === "instalments" && <input
               onChange={({ target: { value } }) => {
                 setMobileCost(value);
                 createInstalment(value, 12);
                 if (value == 0) setInstalments([]);
               }}
               value={mobileCost || ""}
+              disabled={true}
               type="number"
               placeholder="Instalment Price"
               className="my-2 form-control"
-            />
+            />}
 
-            <input
+             <input
               onChange={({ target: { value } }) => setDeviceCash(value)}
+              disabled={true}
               value={DeviceCash || ""}
               type="number"
               placeholder="Cash Price"
@@ -366,7 +368,9 @@ useEffect(() => {
               </button>
             </div> */}
             
-            {paymentMethod === "instalments" && <input
+            {paymentMethod === "instalments" &&<>
+            <h3 className='py-4'>Instalments Advance</h3>
+             <input
               onChange={({ target: { value } }) => {
                 setAdvanceInstalment(Number(value));
 
@@ -375,10 +379,11 @@ useEffect(() => {
                 }
               }}
               value={advanceInstalment || ""}
+              disabled={true}
               type="number"
               placeholder="Advance Inputs"
               className="my-2 form-control"
-            />}
+            /></>}
 
             {paymentMethod === "instalments" && mobileCost > 0 && (
   <>
@@ -405,44 +410,83 @@ useEffect(() => {
       });
 
       return (
-        <div key={i} className="d-flex align-items-center w-100 mb-2">
-          {/* Index */}
-          <span className="px-2 fw-bold">{i + 1}</span>
+<>
+    <div key={i} className="d-flex align-items-center w-100 mb-2 flex-md-row flex-column">
+  {/* Index */}
+  <span className="px-2 fw-bold d-block d-md-none">{i + 1} Month</span>
+  <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
 
-          {/* Amount input */}
-          <input
-            value={e.amount}
-            onChange={({ target: { value } }) => {
-              const updated = [...instalments];
-              updated[i].amount = Number(value) || 0;
-              setInstalments(updated);
-            }}
-            type="number"
-            placeholder="Installment"
-            className="my-2 form-control mx-2"
-          />
+  {/* Amount input */}
+  <input
+    value={e.amount}
+    onChange={({ target: { value } }) => {
+      const updated = [...instalments];
+      updated[i].amount = Number(value) || 0;
+      setInstalments(updated);
+    }}
+    type="number"
+    placeholder="Installment"
+    className="my-2 form-control  w-100 w-md-auto"
+  />
 
-          {/* Date (read only) */}
-          <span className="form-control mx-2 bg-light">
-            {dueDateStr}
-          </span>
+  {/* Date (read only) */}
+  <span className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0">
+    {dueDateStr}
+  </span>
 
-          {/* Status toggle */}
-          <button
-            type="button"
-            onClick={() => {
-              const updated = [...instalments];
-              updated[i].status =
-                updated[i].status === "Paid" ? "Pending" : "Paid";
-              setInstalments(updated);
-            }}
-            className={`btn mx-2 ${
-              e.status === "Paid" ? "btn-success" : "btn-outline-success"
-            }`}
-          >
-            {e.status === "Paid" ? "Paid" : "Pending"}
-          </button>
-        </div>
+  {/* Status toggle */}
+  <div className="d-flex">
+  <button
+    type="button"
+    onClick={() => {
+      const updated = [...instalments];
+      updated[i].status =
+        updated[i].status === "Paid" ? "Pending" : "Paid";
+      setInstalments(updated);
+    }}
+    className={`btn mx-1 my-1 my-md-0 ${
+      e.status === "Paid" ? "btn-success" : "btn-outline-success"
+    }`}
+  >
+    {e.status === "Paid" ? "Paid" : "Paid"}
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      const updated = [...instalments];
+      if (updated[i].status === "Pending") {
+        updated[i].status = "Due";
+      } else if (updated[i].status === "Due") {
+        updated[i].status = "Pending";
+      }
+      setInstalments(updated);
+    }}
+    disabled={e.status === "Paid"} // ✅ Disable if Paid
+    className={`btn mx-1 my-1 my-md-0 ${
+      e.status === "Paid"
+        ? "btn-success"
+        : e.status === "Due"
+        ? "btn-danger"
+        : "btn-outline-secondary"
+    }`}
+  >
+    Due
+  </button>
+  </div>
+</div>
+
+{/* ✅ Status text below row */}
+<div className="mb-3 ">
+  <span
+    className={`fw-bold ${
+      e.status === "Paid" ? "text-success" : "text-warning"
+    }`}
+  >
+    Status: {e.status}
+  </span>
+</div>
+  </>
       );
     })}
 </div>

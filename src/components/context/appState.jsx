@@ -344,9 +344,47 @@ const getInstalmentTransactions = async () => {
 };
 
 
+// ✅ Fetch instalments with at least 1 Pending
+const getPendingInstalmentTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-pending-instalment-transactions");
+    const data = await res.json();
+    return data.success ? data.transactions : [];
+  } catch (err) {
+    console.error("Error fetching pending instalments:", err);
+    return [];
+  }
+};
+
+// ✅ Fetch instalments fully paid
+const getFullyPaidInstalmentTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-fully-paid-instalment-transactions");
+    const data = await res.json();
+    return data.success ? data.transactions : [];
+  } catch (err) {
+    console.error("Error fetching fully paid instalments:", err);
+    return [];
+  }
+};
+
+// ✅ Fetch instalments with Due
+const getDueInstalmentTransactions = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/transaction/get-due-instalment-transactions");
+    const data = await res.json();
+    return data.success ? data.transactions : [];
+  } catch (err) {
+    console.error("Error fetching due instalments:", err);
+    return [];
+  }
+};
+
+
+
     
     return (
-        <AppContext.Provider value={{helloworld,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, formData,notify,setNotify, setFormData,updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
+        <AppContext.Provider value={{helloworld,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, formData,notify,setNotify, setFormData,updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
             {props.children}
         </AppContext.Provider>
     )

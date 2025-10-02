@@ -225,14 +225,14 @@ useEffect(() => {
         <h3 className='py-4'>Payment Method</h3>
         <div className="d-flex">
           <button 
-            disabled={mobileCost <= 0 || loading} 
+            // disabled={mobileCost <= 0 || loading} 
             onClick={() => setPaymentMethod("instalments")} 
             className={`btn ${paymentMethod === "instalments" ? "btn-primary" : "btn-outline-primary"} mx-2`}
           >
             Instalments
           </button>
           <button 
-            disabled={DeviceCash <= 0 || loading} 
+            // disabled={DeviceCash <= 0 || loading} 
             onClick={() => setPaymentMethod("cash")} 
             className={`btn ${paymentMethod === "cash" ? "btn-primary" : "btn-outline-primary"} mx-2`}
           >
@@ -327,8 +327,8 @@ useEffect(() => {
 
 
         <h3 className='py-4'>{ProductName ? ProductName : "Product"} Information</h3>
-        <input onChange={({ target: { value } }) => { setMobileCost(value); createInstalment(value, 12); if (value == 0) { setInstalments([]) } }} value={mobileCost} type="number" placeholder='Instalments Price' className="my-2 form-control" />
-        <input onChange={({ target: { value } }) => setDeviceCash(value)} type="number" placeholder='Cash Price' className="my-2 form-control" />
+        {paymentMethod === "instalments" && <input onChange={({ target: { value } }) => { setMobileCost(value); createInstalment(value, 12); if (value == 0) { setInstalments([]) } }} value={mobileCost} type="number" placeholder='Instalments Price' className="my-2 form-control" />}
+       <input onChange={({ target: { value } }) => setDeviceCash(value)} type="number" placeholder='Cash Price' className="my-2 form-control" />
         <textarea
           name="productDescription"
           placeholder="Product Details"

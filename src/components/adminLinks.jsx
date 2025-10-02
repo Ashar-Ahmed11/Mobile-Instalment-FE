@@ -36,7 +36,7 @@ const AdminLinks = ({mobile}) => {
             <li  data-bs-dismiss={mobile&&"offcanvas"} className="nav-item w-100 py-2">
                 <Link
               
-                    to="/dashboard/users"
+                    to="/dashboard/users/all"
                     className={`customlinks nav-link ${location.pathname.startsWith("/dashboard/users") ? "active" : ""}`}
                 >
                     <i className="fs-4 bi-house"></i>{" "}
