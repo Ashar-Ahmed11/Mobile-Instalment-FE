@@ -203,15 +203,15 @@ function Pdf() {
             <div className='h-100 p-3 border border-dark rounded-4 flex-column d-flex justify-content-center'>
               <div className="d-flex justify-content-between align-items-center">
                 <span className=" fw-bold">Cash price</span>
-                <span className=" ">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en-PK", { style: "currency", currency: "PKR" }) : pdfData?.installmentPrice?.toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
+                <span className=" ">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en-PK", { style: "currency", currency: "PKR" }) : ""} </span>
               </div>
               {pdfData.transactionType === "instalments" && (<div className="d-flex justify-content-between">
                 <span className=" fw-bold">Installment price</span>
-                <span className=" opacity-75">{(pdfData?.installmentPrice - pdfData?.advanceInstalment).toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
+                <span className=" opacity-75">{(pdfData?.installmentPrice ).toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
               </div>)}
               <div className="d-flex justify-content-between">
-                <span className=" fw-bold">{pdfData?.cashPrice ? "Sub Total" : "Advance"}</span>
-                <span className=" opacity-75">{pdfData?.cashPrice ? pdfData.cashPrice.toLocaleString("en-PK", { style: "currency", currency: "PKR" }) : pdfData?.advanceInstalment?.toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
+                <span className=" fw-bold">{ "Advance"}</span>
+                <span className=" opacity-75">{pdfData?.advanceInstalment?.toLocaleString("en-PK", { style: "currency", currency: "PKR" })} </span>
               </div>
               <div className="d-flex justify-content-between">
                 <span className=" fw-bold">Remaining balance</span>

@@ -563,7 +563,7 @@ const UpdateTransaction = () => {
                         // await deleteTransaction(id)
                         setRecycle(true)
                         await handleUpdate(true)
-                        history.push("/dashboard/users")
+                        history.push("/dashboard/users/all")
                         //   setNotify(true)
 
                       }}
