@@ -58,9 +58,22 @@ const RecyclePage = () => {
                 key={txn._id || idx}
                 className="card mb-3 rounded-4 shadow-sm position-relative"
               >
-                <span className="position-absolute top-0 p-3 start-0 translate-middle badge border border-light rounded-circle bg-primary">
-                  <span className="visually-hidden">New alerts</span>
-                </span>
+                   {txn.transactionType === "instalments" && (() => {
+  let badgeClass = "bg-primary";
+  const hasDue = txn.installments.some(ins => ins.status === "Due");
+  const allPaid = txn.installments.every(ins => ins.status === "Paid");
+
+  if (allPaid) badgeClass = "bg-success"; 
+  else if (hasDue) badgeClass = "bg-danger";
+
+  return (
+    <span
+      className={`position-absolute top-0 p-3 start-0 translate-middle badge border border-light rounded-circle ${badgeClass}`}
+    >
+      <span className="visually-hidden">Status Badge</span>
+    </span>
+  );
+})()}
                 <div className="row g-0 d-flex align-items-center">
                   <div className="col-md-11">
                     <Link
