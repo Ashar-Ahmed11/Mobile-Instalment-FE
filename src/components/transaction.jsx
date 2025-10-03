@@ -430,7 +430,7 @@ useEffect(() => {
 
 <div>
   <h4>Date</h4>
- <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+ <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
 </div>
 
 

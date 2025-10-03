@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import AppContext from './context/appContext'
+import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import { useState, useEffect } from 'react'
 const Home = () => {
     const { getTransactions } = useContext(AppContext)
@@ -72,7 +73,7 @@ const Home = () => {
                 <div className="container-fluid py-5">
                     <div className="row">
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/all"> <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
                                     <h1>{transactions.length}</h1>
                                 </div>
@@ -80,9 +81,10 @@ const Home = () => {
                                     <h3 className='fw-normal'>Total Customers</h3>
                                 </div>
                             </div>
+                            </Link>
                         </div>
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/all"> <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
                                     <h1>{transactions.length}</h1>
                                 </div>
@@ -90,9 +92,10 @@ const Home = () => {
                                     <h3 className='fw-normal'>Total Transactions</h3>
                                 </div>
                             </div>
+                            </Link>
                         </div>
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/cash">  <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
                                     <h1>{totalCash().toLocaleString("en-US", {
                                         style: "currency", currency: "PKR", minimumFractionDigits: 0,
@@ -103,9 +106,10 @@ const Home = () => {
                                     <h3 className='fw-normal'>Total Cash</h3>
                                 </div>
                             </div>
+                            </Link>
                         </div>
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/instalments/pending">   <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
                                     <h1>{remainingInstalments().toLocaleString("en-US", {
                                         style: "currency", currency: "PKR", minimumFractionDigits: 0,
@@ -116,9 +120,11 @@ const Home = () => {
                                     <h3 className='fw-normal'>Remaining Instalments</h3>
                                 </div>
                             </div>
+                            </Link>
+
                         </div>
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/instalments/all">  <div className="shadow-sm rounded-4 card text-center p-4">
                                 <div>
                                     <h1>{instalmentTransactions()}</h1>
                                 </div>
@@ -126,21 +132,25 @@ const Home = () => {
                                     <h3 className='fw-normal'>Instalments Customers</h3>
                                 </div>
                             </div>
+                            </Link>
+
                         </div>
                         <div className="col-md-4 col-12 my-2">
-                            <div className="shadow-sm rounded-4 card text-center p-4">
-                                <div>
-                                    <h1>{cashTransactions()}</h1>
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/cash">
+                                <div className="shadow-sm rounded-4 card text-center p-4">
+                                    <div>
+                                        <h1>{cashTransactions()}</h1>
+                                    </div>
+                                    <div className="card-body">
+                                        <h3 className='fw-normal'>Cash Customers</h3>
+                                    </div>
                                 </div>
-                                <div className="card-body">
-                                    <h3 className='fw-normal'>Cash Customers</h3>
-                                </div>
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>
 
-            </div>}
+            </div >}
 
         </>
     )

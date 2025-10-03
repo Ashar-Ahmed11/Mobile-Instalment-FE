@@ -96,27 +96,27 @@ const UpdateTransaction = () => {
   }, [id]);
 
   // Create instalments dynamically
- const createInstalment = (value, insDuration) => {
-  const subCost = Number(value || 0) - Number(advanceInstalment || 0);
-  const newCost = subCost / insDuration;
+  const createInstalment = (value, insDuration) => {
+    const subCost = Number(value || 0) - Number(advanceInstalment || 0);
+    const newCost = subCost / insDuration;
 
-  let arr = [];
-  let startDate = new Date();
+    let arr = [];
+    let startDate = new Date();
 
-  for (let index = 0; index < insDuration; index++) {
-    let dueDate = new Date(startDate);
-    dueDate.setMonth(startDate.getMonth() + (index + 1)); // month 1 = next month
+    for (let index = 0; index < insDuration; index++) {
+      let dueDate = new Date(startDate);
+      dueDate.setMonth(startDate.getMonth() + (index + 1)); // month 1 = next month
 
-    arr.push({
-      amount: newCost,
-      status: "Pending",
-      date: dueDate,   // ✅ add date
-    });
-  }
+      arr.push({
+        amount: newCost,
+        status: "Pending",
+        date: dueDate,   // ✅ add date
+      });
+    }
 
-  setInstalments(arr);
-  setInstalmentDuration(insDuration);
-};
+    setInstalments(arr);
+    setInstalmentDuration(insDuration);
+  };
 
 
 
@@ -176,11 +176,11 @@ const UpdateTransaction = () => {
       }));
     }
   };
-useEffect(() => {
-  if (mobileCost > 0 && advanceInstalment !== null && instalments.length === 0) {
-    createInstalment(mobileCost, instalmentDuration);
-  }
-}, [advanceInstalment, mobileCost, instalmentDuration]);
+  useEffect(() => {
+    if (mobileCost > 0 && advanceInstalment !== null && instalments.length === 0) {
+      createInstalment(mobileCost, instalmentDuration);
+    }
+  }, [advanceInstalment, mobileCost, instalmentDuration]);
 
 
   const handleGranterChange = (e) => {
@@ -243,7 +243,7 @@ useEffect(() => {
             <h3 className='py-4'>User Information</h3>
             <input name="fullName" value={userInfo.fullName} onChange={handleUserChange} type="text" placeholder='Full Name' className="my-2 form-control" />
             <input name="contactNumber" value={userInfo.contactNumber} onChange={handleUserChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
-            {txn.transactionType == "instalments" &&<input name="cnicNumber" value={userInfo.cnicNumber} onChange={handleUserChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />}
+            {txn.transactionType == "instalments" && <input name="cnicNumber" value={userInfo.cnicNumber} onChange={handleUserChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />}
             <input name="address" value={userInfo.address} onChange={handleUserChange} type="text" placeholder='Address' className="my-2 form-control" />
             <div className="input-group mb-3">
               <input name="image" onChange={handleUserChange} type="file" className="form-control" />
@@ -254,72 +254,72 @@ useEffect(() => {
             )}
 
             {txn.transactionType == "instalments" && <>
-            <h3 className='py-4'>Guarantor Information</h3>
-            <input name="fullName" value={granterInfo.fullName} onChange={handleGranterChange} type="text" placeholder='Full Name' className="my-2 form-control" />
-            <input name="contactNumber" value={granterInfo.contactNumber} onChange={handleGranterChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
-            <input name="cnicNumber" value={granterInfo.cnicNumber} onChange={handleGranterChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />
-            <input name="address" value={granterInfo.address} onChange={handleGranterChange} type="text" placeholder='Address' className="my-2 form-control" />
-            <div className="input-group mb-3">
-              <input name="image" onChange={handleGranterChange} type="file" className="form-control" />
-              <label className="input-group-text">Guarantor Image</label>
-            </div>
-            {granterInfo.image && (
-              <img src={granterInfo.image} alt="Granter" style={{ maxWidth: "150px", borderRadius: "8px" }} />
-            )}
+              <h3 className='py-4'>Guarantor Information</h3>
+              <input name="fullName" value={granterInfo.fullName} onChange={handleGranterChange} type="text" placeholder='Full Name' className="my-2 form-control" />
+              <input name="contactNumber" value={granterInfo.contactNumber} onChange={handleGranterChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
+              <input name="cnicNumber" value={granterInfo.cnicNumber} onChange={handleGranterChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />
+              <input name="address" value={granterInfo.address} onChange={handleGranterChange} type="text" placeholder='Address' className="my-2 form-control" />
+              <div className="input-group mb-3">
+                <input name="image" onChange={handleGranterChange} type="file" className="form-control" />
+                <label className="input-group-text">Guarantor Image</label>
+              </div>
+              {granterInfo.image && (
+                <img src={granterInfo.image} alt="Granter" style={{ maxWidth: "150px", borderRadius: "8px" }} />
+              )}
             </>}
 
             <h3 className='py-4'>Product Type</h3>
-         <input 
-  type="text" 
-  placeholder="Search products..." 
-  value={searchQuery} 
-  onChange={(e) => handleSearch(e.target.value)}
-  className="form-control my-2"
-/>     {/* Optional search box – uncomment if you still want search */}
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="form-control my-2"
+            />     {/* Optional search box – uncomment if you still want search */}
 
-           {searchQuery.trim() && filteredProducts.length > 0 && (
-  <ul className="list-group my-2">
-    {filteredProducts.map(product => (
-      <li 
-        key={product._id} 
-        className={`list-group-item ${ProductType === product._id ? 'active' : ''}`}
-        onClick={() => { setProductName(product.productName); setProduct(product); handleSearch("")}}
-        style={{ cursor: "pointer" }}
-      >
-        {product.productName} - {product.wholesalerName} ({product.productType})
-      </li>
-    ))}
-  </ul>
-)}
+            {searchQuery.trim() && filteredProducts.length > 0 && (
+              <ul className="list-group my-2">
+                {filteredProducts.map(product => (
+                  <li
+                    key={product._id}
+                    className={`list-group-item ${ProductType === product._id ? 'active' : ''}`}
+                    onClick={() => { setProductName(product.productName); setProduct(product); handleSearch("") }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {product.productName} - {product.wholesalerName} ({product.productType})
+                  </li>
+                ))}
+              </ul>
+            )}
 
-{Product && (
-  <div className="list-group my-2">
-    <div 
-      className="list-group-item active d-flex justify-content-between align-items-center"
-      style={{ cursor: "pointer" }}
-    >
-      <span>
-  Product Name: <b>{Product.productName}</b> <br />
-  Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
-  Wholesaler Name: {Product.wholesalerName}
-</span>
+            {Product && (
+              <div className="list-group my-2">
+                <div
+                  className="list-group-item active d-flex justify-content-between align-items-center"
+                  style={{ cursor: "pointer" }}
+                >
+                  <span>
+                    Product Name: <b>{Product.productName}</b> <br />
+                    Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
+                    Wholesaler Name: {Product.wholesalerName}
+                  </span>
 
-      <button 
-        type="button" 
-        className="btn-close" 
-        aria-label="Close"
-        onClick={() => {setProduct(null); }} // your close handler
-        style={{ filter: "invert(38%) sepia(89%) saturate(7500%) hue-rotate(0deg) brightness(90%) contrast(120%)" }}
-      ></button>
-    </div>
-  </div>
-)}
+                  <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={() => { setProduct(null); }} // your close handler
+                    style={{ filter: "invert(38%) sepia(89%) saturate(7500%) hue-rotate(0deg) brightness(90%) contrast(120%)" }}
+                  ></button>
+                </div>
+              </div>
+            )}
 
 
 
 
             <h3 className='py-4'>{ProductName ? ProductName : "Product"} Information</h3>
-           {paymentMethod === "instalments" && <input
+            {paymentMethod === "instalments" && <input
               onChange={({ target: { value } }) => {
                 setMobileCost(value);
                 createInstalment(value, 12);
@@ -332,7 +332,7 @@ useEffect(() => {
               className="my-2 form-control"
             />}
 
-             <input
+            <input
               onChange={({ target: { value } }) => setDeviceCash(value)}
               disabled={true}
               value={DeviceCash || ""}
@@ -340,15 +340,15 @@ useEffect(() => {
               placeholder="Cash Price"
               className="my-2 form-control"
             />
-<textarea
-          name="productDescription"
-          placeholder="Product Details"
-          className="form-control"
-          value={ProductDetails || ""}
+            <textarea
+              name="productDescription"
+              placeholder="Product Details"
+              className="form-control"
+              value={ProductDetails || ""}
 
-          onChange={({ target: { value } })=>{setProductDetails(value)}}
-          // required
-        />
+              onChange={({ target: { value } }) => { setProductDetails(value) }}
+            // required
+            />
 
             {/* <h3 className='py-4'>Payment Method</h3>
             <div className="d-flex">
@@ -367,129 +367,128 @@ useEffect(() => {
                 Cash
               </button>
             </div> */}
-            
-            {paymentMethod === "instalments" &&<>
-            <h3 className='py-4'>Instalments Advance</h3>
-             <input
-              onChange={({ target: { value } }) => {
-                setAdvanceInstalment(Number(value));
 
-                if (mobileCost > 0) {
-                  createInstalment(mobileCost, instalmentDuration);
-                }
-              }}
-              value={advanceInstalment || ""}
-              disabled={true}
-              type="number"
-              placeholder="Advance Inputs"
-              className="my-2 form-control"
-            /></>}
+            {paymentMethod === "instalments" && <>
+              <h3 className='py-4'>Instalments Advance</h3>
+              <input
+                onChange={({ target: { value } }) => {
+                  setAdvanceInstalment(Number(value));
+
+                  if (mobileCost > 0) {
+                    createInstalment(mobileCost, instalmentDuration);
+                  }
+                }}
+                value={advanceInstalment || ""}
+                disabled={true}
+                type="number"
+                placeholder="Advance Inputs"
+                className="my-2 form-control"
+              /></>}
 
             {paymentMethod === "instalments" && mobileCost > 0 && (
-  <>
-    <h3 className="py-4">Instalment Duration</h3>
-    <div className="py-2">
-      <button
-        className="btn btn-primary m-2"
-        disabled
-      >
-        {instalmentDuration + 1} Months
-      </button>
-    </div>
-  </>
-)}
+              <>
+                <h3 className="py-4">Instalment Duration</h3>
+                <div className="py-2">
+                  <button
+                    className="btn btn-primary m-2"
+                    disabled
+                  >
+                    {instalmentDuration + 1} Months
+                  </button>
+                </div>
+              </>
+            )}
 
 
-           <div className="py-4">
-  {(paymentMethod === "instalments" && mobileCost > 0) &&
-    instalments.map((e, i) => {
-      const dueDateStr = new Date(e.date).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+            <div className="py-4">
+              {(paymentMethod === "instalments" && mobileCost > 0) &&
+                instalments.map((e, i) => {
+                  const dueDateStr = new Date(e.date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  });
 
-      return (
-<>
-    <div key={i} className="d-flex align-items-center w-100 mb-2 flex-md-row flex-column">
-  {/* Index */}
-  <span className="px-2 fw-bold d-block d-md-none">{i + 1} Month</span>
-  <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
+                  return (
+                    <>
+                      <div className="card rounded-3 my-3 p-2">
+                        <div key={i} className="d-flex align-items-center w-100 mb-2 flex-md-row flex-column">
+                          {/* Index */}
+                          <span className="px-2 fw-bold d-block d-md-none">{i + 1} Month</span>
+                          <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
 
-  {/* Amount input */}
-  <input
-    value={e.amount}
-    onChange={({ target: { value } }) => {
-      const updated = [...instalments];
-      updated[i].amount = Number(value) || 0;
-      setInstalments(updated);
-    }}
-    type="number"
-    placeholder="Installment"
-    className="my-2 form-control  w-100 w-md-auto"
-  />
+                          {/* Amount input */}
+                          <input
+                            value={e.amount}
+                            onChange={({ target: { value } }) => {
+                              const updated = [...instalments];
+                              updated[i].amount = Number(value) || 0;
+                              setInstalments(updated);
+                            }}
+                            type="number"
+                            placeholder="Installment"
+                            className="my-2 form-control  w-100 w-md-auto"
+                          />
 
-  {/* Date (read only) */}
-  <span className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0">
-    {dueDateStr}
-  </span>
+                          {/* Date (read only) */}
+                          <span className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0">
+                            {dueDateStr}
+                          </span>
 
-  {/* Status toggle */}
-  <div className="d-flex">
-  <button
-    type="button"
-    onClick={() => {
-      const updated = [...instalments];
-      updated[i].status =
-        updated[i].status === "Paid" ? "Pending" : "Paid";
-      setInstalments(updated);
-    }}
-    className={`btn mx-1 my-1 my-md-0 ${
-      e.status === "Paid" ? "btn-success" : "btn-outline-success"
-    }`}
-  >
-    {e.status === "Paid" ? "Paid" : "Paid"}
-  </button>
+                          {/* Status toggle */}
+                          <div className="d-flex">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...instalments];
+                                updated[i].status =
+                                  updated[i].status === "Paid" ? "Pending" : "Paid";
+                                setInstalments(updated);
+                              }}
+                              className={`btn mx-1 my-1 my-md-0 ${e.status === "Paid" ? "btn-success" : "btn-outline-success"
+                                }`}
+                            >
+                              {e.status === "Paid" ? "Paid" : "Paid"}
+                            </button>
 
-  <button
-    type="button"
-    onClick={() => {
-      const updated = [...instalments];
-      if (updated[i].status === "Pending") {
-        updated[i].status = "Due";
-      } else if (updated[i].status === "Due") {
-        updated[i].status = "Pending";
-      }
-      setInstalments(updated);
-    }}
-    disabled={e.status === "Paid"} // ✅ Disable if Paid
-    className={`btn mx-1 my-1 my-md-0 ${
-      e.status === "Paid"
-        ? "btn-success"
-        : e.status === "Due"
-        ? "btn-danger"
-        : "btn-outline-secondary"
-    }`}
-  >
-    Due
-  </button>
-  </div>
-</div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...instalments];
+                                if (updated[i].status === "Pending") {
+                                  updated[i].status = "Due";
+                                } else if (updated[i].status === "Due") {
+                                  updated[i].status = "Pending";
+                                }
+                                setInstalments(updated);
+                              }}
+                              disabled={e.status === "Paid"} // ✅ Disable if Paid
+                              className={`btn mx-1 my-1 my-md-0 ${e.status === "Paid"
+                                ? "btn-success"
+                                : e.status === "Due"
+                                  ? "btn-danger"
+                                  : "btn-outline-secondary"
+                                }`}
+                            >
+                              Due
+                            </button>
+                          </div>
+                        </div>
 
-{/* ✅ Status text below row */}
-<div className="mb-3 ">
-  <span
-    className={`fw-bold ${
-      e.status === "Paid" ? "text-success" : "text-warning"
-    }`}
-  >
-    Status: {e.status}
-  </span>
-</div>
-  </>
-      );
-    })}
-</div>
+                        {/* ✅ Status text below row */}
+                        <div className="mb-3 ">
+                          <span
+                            className={`fw-bold ${e.status === "Paid" ? "text-success" : "text-warning"
+                              }`}
+                          >
+                            Status: {e.status}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })}
+            </div>
 
 
 
@@ -515,7 +514,7 @@ useEffect(() => {
                 Delete Transaction
               </button>
               <button
-                onClick={()=>{handleUpdate(false)}}
+                onClick={() => { handleUpdate(false) }}
                 className="btn btn-outline-success"
                 disabled={loading}
               >
