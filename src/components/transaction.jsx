@@ -160,7 +160,7 @@ useEffect(() => {
 
 
     const notifyTrasactionCreation = () => {
-        toast.success("Product Created Successfully", {
+        toast.success("Transaction Created Successfully", {
           position: "top-right",
           autoClose: 3000, // time in ms
           hideProgressBar: false,
