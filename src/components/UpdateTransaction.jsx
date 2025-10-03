@@ -418,17 +418,18 @@ const UpdateTransaction = () => {
                           <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
 
                           {/* Amount input */}
-                          <input
-                            value={e.amount}
-                            onChange={({ target: { value } }) => {
-                              const updated = [...instalments];
-                              updated[i].amount = Number(value) || 0;
-                              setInstalments(updated);
-                            }}
-                            type="number"
-                            placeholder="Installment"
-                            className="my-2 form-control  w-100 w-md-auto"
-                          />
+                         <input
+  value={e.amount ? e.amount.toFixed(2) : ""}
+  onChange={({ target: { value } }) => {
+    const updated = [...instalments];
+    updated[i].amount = parseFloat(value) || 0; // store numeric
+    setInstalments(updated);
+  }}
+  type="number"
+  step="0.01"   // allow decimals
+  placeholder="Installment"
+  className="my-2 form-control w-100 w-md-auto"
+/>
 
                           {/* Date (read only) */}
                           <span className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0">

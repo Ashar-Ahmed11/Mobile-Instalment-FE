@@ -388,15 +388,17 @@ useEffect(() => {
 
         {/* Amount input */}
         <input
-          value={e.amount}
-          onChange={({ target: { value } }) => {
-            const updated = [...instalments];
-            updated[i].amount = Number(value) || 0;
-            setInstalments(updated);
-          }}
-          type="number"
-          className="my-2 form-control"
-        />
+  value={e.amount !== undefined ? Number(e.amount).toFixed(2) : ""}
+  onChange={({ target: { value } }) => {
+    const updated = [...instalments];
+    updated[i].amount = parseFloat(value) || 0; // ✅ keeps numeric value
+    setInstalments(updated);
+  }}
+  type="number"
+  step="0.01"  // ✅ allows decimals
+  className="my-2 form-control"
+/>
+
 
         {/* Date input (default monthly, editable) */}
         <input

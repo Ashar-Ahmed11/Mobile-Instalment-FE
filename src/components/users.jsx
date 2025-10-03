@@ -204,11 +204,14 @@ const Users = () => {
                             <span className="text-success fw-bold">Paid</span>
                           ) : (
                             <span>
-                              {remaining.toLocaleString("en-PK", {
-                                style: "currency",
-                                currency: "PKR",
-                              })}
-                            </span>
+  {remaining.toLocaleString("en-PK", {
+    style: "currency",
+    currency: "PKR",
+    minimumFractionDigits: 2, // ✅ always 2 decimals
+    maximumFractionDigits: 2  // ✅ never more than 2
+  })}
+</span>
+
                           );
                         })()}
                       </p>
