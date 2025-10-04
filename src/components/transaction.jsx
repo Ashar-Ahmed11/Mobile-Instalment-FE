@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 
 const Transaction = () => {
     const history = useHistory();
-  const { products, createTransaction } = useContext(AppContext);
+  const { products, createTransaction, updateProduct } = useContext(AppContext);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [mobileCost, setMobileCost] = useState(null);
   const [instalments, setInstalments] = useState([]);
@@ -23,11 +23,12 @@ const Transaction = () => {
   const [ProductDetails, setProductDetails] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [newTxn, setNewTxn] = useState();
-
+  const [updateSold, setUpdateSold] = useState()
 
 
 
   const [loading, setLoading] = useState(false);
+
 
   // User Info
   const [userInfo, setUserInfo] = useState({
@@ -182,6 +183,13 @@ useEffect(() => {
       }));
     }
   };
+  const updateProductToSold = ()=>{
+    const soldProduct = {
+      ...Product,
+      sold: true
+    } 
+    updateProduct(Product._id, soldProduct)
+  }
 
   const handleCreateTransaction = async () => {
     setLoading(true);
@@ -201,7 +209,7 @@ useEffect(() => {
       installmentPrice: mobileCost,
       date: startDate
     };
-
+updateProductToSold()
     console.log("Transaction Object:", transactionObject);
 
     const txn = await createTransaction(transactionObject);

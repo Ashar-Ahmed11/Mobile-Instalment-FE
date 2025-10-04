@@ -213,7 +213,7 @@ useEffect(() => {
               <Route exact path="/dashboard/products">
                 <Product />
               </Route>
-              <Route exact path="/dashboard/view-products">
+              <Route exact path="/dashboard/view-products/:filter">
                 <ViewProducts />
               </Route>
               <Route exact path="/dashboard/update-products/:id">

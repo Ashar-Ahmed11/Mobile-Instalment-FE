@@ -2,10 +2,13 @@ import React, { useState, useContext } from "react";
 import AppContext from "./context/appContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Product = () => {
 const [loading, setLoading] = useState(false)
 const { formData, setFormData, handleCreateProduct } = useContext(AppContext);
+const [startDate, setStartDate] = useState(new Date());
 
   const cloudinaryImgUpload = async (e) => {
   const file = e.target.files[0];
@@ -59,8 +62,10 @@ const notifyProductCreation = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
+      date: startDate,
       [e.target.name]: e.target.value,
     });
+    console.log(formData)
   };
 
 
@@ -219,7 +224,10 @@ const notifyProductCreation = () => {
   onChange={handleChange}
   required
 />
-
+<div>
+  <h4>Date</h4>
+ <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+</div>
 
 
         <div className="d-flex justify-content-end mt-4">
