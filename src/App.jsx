@@ -15,6 +15,7 @@ function App() {
   const location = useLocation()
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+    
   //  if(location.pathname!=="/"){
   //   history.push("/")
   //  }
