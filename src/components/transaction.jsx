@@ -395,17 +395,46 @@ updateProductToSold()
         <span className="px-2 fw-bold">{i + 1}</span>
 
         {/* Amount input */}
-        <input
-  value={e.amount !== undefined ? Number(e.amount).toFixed(2) : ""}
-  onChange={({ target: { value } }) => {
-    const updated = [...instalments];
-    updated[i].amount = parseFloat(value) || 0; // ✅ keeps numeric value
-    setInstalments(updated);
-  }}
+         <input
   type="number"
-  step="0.01"  // ✅ allows decimals
-  className="my-2 form-control"
+  step="0.01"
+  value={e.amount === "" ? "" : e.amount}
+  onChange={(event) => {
+    const rawValue = event.target.value;
+
+    setInstalments((prev) => {
+      const updated = [...prev];
+      const oldValue = parseFloat(updated[i].amount) || 0;
+
+      // If input is empty, allow it without forcing to 0
+      if (rawValue === "") {
+        updated[i].amount = "";
+        return updated;
+      }
+
+      const value = parseFloat(rawValue);
+      const diff = value - oldValue;
+      updated[i].amount = value;
+
+      // Distribute difference among other months
+      const others = updated.length - 1;
+      if (others > 0) {
+        const adjust = -diff / others;
+        for (let j = 0; j < updated.length; j++) {
+          if (j !== i && !isNaN(updated[j].amount)) {
+            updated[j].amount = parseFloat(
+              (updated[j].amount + adjust).toFixed(2)
+            );
+          }
+        }
+      }
+
+      return updated;
+    });
+  }}
+  className="my-2 form-control w-100 w-md-auto"
 />
+
 
 
         {/* Date input (default monthly, editable) */}

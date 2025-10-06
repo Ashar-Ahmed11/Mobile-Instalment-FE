@@ -13,21 +13,6 @@ const [pdfData, setPdfdata] = useState(false);
 
 
 
-
-
-  const [formData, setFormData] = useState({
-    wholesalerName: "",
-    productName: "",
-    productDescription: "",
-    productType: "",
-    productImg: "",
-    mobileIMEI1: "",
-    mobileIMEI2: "",
-    wholesalePrice: "",
-   
-  });
-
-
 const loggedIn = async (username, password)=> {
   try {
     const response = await fetch("http://localhost:8000/api/auth/login", {
@@ -101,6 +86,10 @@ const createTransaction = async (transactionObject) => {
 
 const handleCreateProduct = async (formData) => {
   try {
+    
+       
+    console.log("📅 Sending date:", formData);
+
     const res = await fetch("http://localhost:8000/api/product/create-products", {
       method: "POST",
       headers: {
@@ -110,22 +99,12 @@ const handleCreateProduct = async (formData) => {
     });
 
     const data = await res.json();
-    console.log("📦 Create Product Response:", data); // 👈 check actual backend response
+    console.log("📦 Create Product Response:", data);
 
     if (data.success) {
-    //   alert("✅ Product created successfully!");
-      setFormData({
-        wholesalerName: "",
-        productName: "",
-        productDescription: "",
-        productType: "",
-        productImg: "",
-        mobileIMEI1: "",
-        mobileIMEI2: "",
-        wholesalePrice: "",
-      });
+   return
     } else {
-      alert("❌ Failed: " + (data.message || "Unknown error")); // fallback if message missing
+      alert("❌ Failed: " + (data.message || "Unknown error"));
     }
   } catch (err) {
     console.error("Error creating product:", err);
@@ -404,7 +383,7 @@ const fetchSoldProducts = async () => {
 
     
     return (
-        <AppContext.Provider value={{helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, formData,notify,setNotify, setFormData,updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
+        <AppContext.Provider value={{helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, notify,setNotify, updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
             {props.children}
         </AppContext.Provider>
     )

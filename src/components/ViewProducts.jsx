@@ -15,6 +15,7 @@ const ViewProducts = () => {
   const fetchData = async () => {
     setLoading(true);
     const data = filter === "sold" ? await fetchSoldProducts() : await getProducts();
+    console.log(data)
     setProducts(data || []);
     setLoading(false);
   };

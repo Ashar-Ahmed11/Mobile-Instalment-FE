@@ -307,7 +307,7 @@ const UpdateProducts = () => {
             onClick={async () => {
                 setModal(false);
              await deleteProduct(id)
-              history.push("/dashboard/view-products")
+              history.push("/dashboard/view-products/all")
             //   setNotify(true)
               
             }}
