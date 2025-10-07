@@ -227,6 +227,10 @@ const UpdateTransaction = () => {
   //     const handleUpdate = ()=>{
   //   }
 
+  const convertData = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear()
+  }
 
   return (
     <div>
@@ -288,7 +292,8 @@ const UpdateTransaction = () => {
                     onClick={() => { setProductName(product.productName); setProduct(product); handleSearch("") }}
                     style={{ cursor: "pointer" }}
                   >
-                    {product.productName} - {product.wholesalerName} ({product.productType})
+                    {product.productName} - {product.wholesalerName} ({product.productType}) <br /> Date: {convertData(product.date)}
+
                   </li>
                 ))}
               </ul>
@@ -303,7 +308,8 @@ const UpdateTransaction = () => {
                   <span>
                     Product Name: <b>{Product.productName}</b> <br />
                     Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
-                    Wholesaler Name: {Product.wholesalerName}
+                    Wholesaler Name: {Product.wholesalerName} <br />
+                    Date: {convertData(Product.date)}
                   </span>
 
                   <button
@@ -424,36 +430,64 @@ const UpdateTransaction = () => {
                             type="number"
                             step="0.01"
                             value={e.amount === "" ? "" : e.amount}
+                            disabled={e.status === "Paid"} // ✅ Disable when Paid
                             onChange={(event) => {
                               const rawValue = event.target.value;
 
                               setInstalments((prev) => {
-                                const updated = [...prev];
+                                const updated = prev.map((it) => ({ ...it }));
                                 const oldValue = parseFloat(updated[i].amount) || 0;
 
-                                // ✅ allow clearing the input completely
                                 if (rawValue === "") {
                                   updated[i].amount = "";
                                   return updated;
                                 }
 
                                 const value = parseFloat(rawValue);
+                                if (!Number.isFinite(value)) return prev;
+
                                 const diff = value - oldValue;
+                                updated[i].amount = Number(value.toFixed(2));
 
-                                // ✅ set new amount
-                                updated[i].amount = value;
+                                const adjustableIndexes = updated
+                                  .map((inst, idx) => ({ ...inst, idx }))
+                                  .filter(
+                                    (inst) =>
+                                      inst.idx !== i &&
+                                      (inst.status === "Pending" || inst.status === "Due")
+                                  )
+                                  .map((inst) => inst.idx);
 
-                                // ✅ redistribute difference among other months
-                                const others = updated.length - 1;
-                                if (others > 0) {
-                                  const adjust = -diff / others;
-                                  for (let j = 0; j < updated.length; j++) {
-                                    if (j !== i && !isNaN(updated[j].amount)) {
-                                      updated[j].amount = parseFloat(
-                                        (parseFloat(updated[j].amount) + adjust).toFixed(2)
-                                      );
-                                    }
-                                  }
+                                const others = adjustableIndexes.length;
+                                if (others === 0) return updated;
+
+                                const prevAdjustableSum = adjustableIndexes.reduce(
+                                  (s, idx) => s + (parseFloat(prev[idx].amount) || 0),
+                                  0
+                                );
+
+                                const adjust = -diff / others;
+                                adjustableIndexes.forEach((idx) => {
+                                  const base = parseFloat(prev[idx].amount) || 0;
+                                  updated[idx].amount = Number((base + adjust).toFixed(2));
+                                });
+
+                                const newAdjustableSum = adjustableIndexes.reduce(
+                                  (s, idx) => s + (parseFloat(updated[idx].amount) || 0),
+                                  0
+                                );
+                                const intendedNewAdjustableSum = prevAdjustableSum - diff;
+                                const roundingCorrection = Number(
+                                  (intendedNewAdjustableSum - newAdjustableSum).toFixed(2)
+                                );
+
+                                if (roundingCorrection !== 0 && adjustableIndexes.length > 0) {
+                                  const lastIdx = adjustableIndexes[adjustableIndexes.length - 1];
+                                  updated[lastIdx].amount = Number(
+                                    (
+                                      (parseFloat(updated[lastIdx].amount) || 0) + roundingCorrection
+                                    ).toFixed(2)
+                                  );
                                 }
 
                                 return updated;
@@ -462,8 +496,7 @@ const UpdateTransaction = () => {
                             className="my-2 form-control w-100 w-md-auto"
                           />
 
-
-                          {/* Date (read only) */}
+                          {/* Date Picker */}
                           <DatePicker
                             selected={e.date ? new Date(e.date) : null}
                             onChange={(date) => {
@@ -471,10 +504,12 @@ const UpdateTransaction = () => {
                               updated[i].date = date;
                               setInstalments(updated);
                             }}
+                            disabled={e.status === "Paid"} // ✅ Disable when Paid
                             dateFormat="dd-MM-yyyy"
                             className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0"
                             placeholderText="Select due date"
                           />
+
 
                           {/* Status toggle */}
                           <div className="d-flex mx-2">

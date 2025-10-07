@@ -390,13 +390,34 @@ const fetchAllProducts = async () => {
     console.error("Error fetching sold products:", error);
   }
 };
+// https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-pending-due-instalment-transactions
+const getAllPendingDueTransactions = async () => {
+   try {
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-pending-due-instalment-transactions");
+    const data = await res.json();
+    if (data.success) {
+      return data.transactions;
+    } else {
+      console.error("Failed to fetch instalment transactions:", data.message);
+      return [];
+    }
+  } catch (err) {
+    console.error("Error fetching instalment transactions:", err);
+    return [];
+  }
+};
+
+useEffect(() => {
+  getAllPendingDueTransactions()
+}, [])
 
 
-  // console.clear()
+// https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com
+  console.clear()
 
     
     return (
-        <AppContext.Provider value={{fetchAllProducts,helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, notify,setNotify, updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
+        <AppContext.Provider value={{getAllPendingDueTransactions,fetchAllProducts,helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, notify,setNotify, updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
             {props.children}
         </AppContext.Provider>
     )

@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 
 const Transaction = () => {
   const history = useHistory();
-  const { products, createTransaction, updateProduct,getProducts } = useContext(AppContext);
+  const { products, createTransaction, updateProduct, getProducts } = useContext(AppContext);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [mobileCost, setMobileCost] = useState(null);
   const [instalments, setInstalments] = useState([]);
@@ -224,9 +224,13 @@ const Transaction = () => {
     setLoading(false);
   };
 
+  const convertData = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.getDate()  + '-' +  (date.getMonth() + 1) + '-' + date.getFullYear()
+  }
 
-
-
+  console.log(Product);
+  
   return (
     <div>
       <h1 className="px-4">Create Transaction</h1>
@@ -306,7 +310,7 @@ const Transaction = () => {
                 onClick={() => { setProductType(product._id); setProductName(product.productName); setProduct(product); handleSearch("") }}
                 style={{ cursor: "pointer" }}
               >
-                {product.productName} - {product.wholesalerName} ({product.productType})
+                {product.productName} - {product.wholesalerName} ({product.productType}) <br/> Date: {convertData(product.date)}
               </li>
             ))}
           </ul>
@@ -321,7 +325,8 @@ const Transaction = () => {
               <span>
                 Product Name: <b>{Product.productName}</b> <br />
                 Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
-                Wholesaler Name: {Product.wholesalerName}
+                Wholesaler Name: {Product.wholesalerName}<br />
+                Date: {convertData(Product.date)}
               </span>
 
               <button
@@ -476,7 +481,7 @@ const Transaction = () => {
 
         <div>
           <h4>Date</h4>
-          <DatePicker   dateFormat="dd/MM/yyyy" className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+          <DatePicker dateFormat="dd/MM/yyyy" className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
         </div>
 
 

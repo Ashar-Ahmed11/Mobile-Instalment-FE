@@ -16,6 +16,7 @@ const Product = () => {
     productDescription: "",
     productType: "",
     productImg: "",
+    deviceType:"others",
     mobileIMEI1: "",
     mobileIMEI2: "",
     wholesalePrice: "",
