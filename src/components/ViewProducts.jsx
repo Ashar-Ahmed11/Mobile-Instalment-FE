@@ -26,8 +26,8 @@ const ViewProducts = () => {
 
   return (
     <div className="container p-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>{filter === "sold" ? "Sold Products" : "All Products"}</h1>
+      <h1>{filter === "sold" ? "Sold Products" : "All Products"}</h1>
+      <div className="d-flex justify-content-center align-items-center my-3">
 
         {/* ✅ Buttons like Users page */}
         <div>

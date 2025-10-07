@@ -3,11 +3,14 @@ import AppContext from './context/appContext'
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import { useState, useEffect } from 'react'
 const Home = () => {
-    const { getTransactions } = useContext(AppContext)
+    const { getTransactions, fetchAllProducts } = useContext(AppContext)
     const [transactions, settransactions] = useState([])
     const [loading, setLoading] = useState(true)
+    const [fetchProducts, setFetchProducts] = useState([])
     const fetchTransactions = async () => {
         let fetchedTransactions = await getTransactions()
+        let fetchedProducts = await fetchAllProducts()
+        setFetchProducts(fetchedProducts)
         settransactions(fetchedTransactions)
         setLoading(false)
     }
@@ -15,11 +18,20 @@ const Home = () => {
         fetchTransactions()
 
     }, [])
+    console.log(fetchProducts);
 
     const totalCash = () => {
         let cashTransactions = transactions.filter((e) => { return e.transactionType == "cash" })
         let sumWithInitial = cashTransactions.reduce(
             (accumulator, currentValue) => accumulator + currentValue.cashPrice,
+            0,
+        );
+        return sumWithInitial
+    }
+    const totalInstalment = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
+        let sumWithInitial = cashTransactions.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.installmentPrice,
             0,
         );
         return sumWithInitial
@@ -53,6 +65,41 @@ const Home = () => {
     const instalmentTransactions = () => {
         let cashTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
         return cashTransactions.length
+    }
+
+    const priceConverter = (_amount) => {
+        let convertedAmount = _amount.toLocaleString("en-US", {
+            style: "currency", currency: "PKR", minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        })
+        return convertedAmount
+    }
+
+    const totalInvestment = () => {
+
+        let sumWithInitial = fetchProducts.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.wholesalePrice,
+            0,
+        );
+        return priceConverter(sumWithInitial)
+    }
+    const cashProfit = () => {
+        let cashTransactions = transactions.filter((e) => { return e.transactionType == "cash" })
+        let sumWithInitial = cashTransactions.reduce(
+            (accumulator, currentValue) => accumulator + ( currentValue.cashPrice-currentValue.productType.wholesalePrice ),
+            0,
+        );
+
+        return priceConverter(sumWithInitial)
+    }
+    const instalmentProfit = () => {
+        let instalmentTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
+        let sumWithInitial = instalmentTransactions.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.installmentPrice - currentValue.productType.wholesalePrice ),
+            0,
+        );
+
+        return priceConverter(sumWithInitial)
     }
 
     console.log(transactions);
@@ -143,6 +190,43 @@ const Home = () => {
                                     </div>
                                     <div className="card-body">
                                         <h3 className='fw-normal'>Cash Customers</h3>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                        <div className="col-md-4 col-12 my-2">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/cash">
+                                <div className="shadow-sm rounded-4 card text-center p-4">
+                                    <div>
+                                        <h1>{totalInvestment()}</h1>
+                                    </div>
+                                    <div className="card-body">
+                                        <h3 className='fw-normal'>Total Investment</h3>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+
+                        <div className="col-md-4 col-12 my-2">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/cash">
+                                <div className="shadow-sm rounded-4 card text-center p-4">
+                                    <div>
+                                        <h1>{cashProfit()}</h1>
+                                    </div>
+                                    <div className="card-body">
+                                        <h3 className='fw-normal'>Total Cash Profit</h3>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                        <div className="col-md-4 col-12 my-2">
+                            <Link style={{ textDecoration: "none" }} to="/dashboard/users/cash">
+                                <div className="shadow-sm rounded-4 card text-center p-4">
+                                    <div>
+                                        <h1>{instalmentProfit()}</h1>
+                                    </div>
+                                    <div className="card-body">
+                                        <h3 className='fw-normal'>Total Instalment Profit</h3>
                                     </div>
                                 </div>
                             </Link>

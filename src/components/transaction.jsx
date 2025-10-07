@@ -7,8 +7,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router-dom";
 
 const Transaction = () => {
-    const history = useHistory();
-  const { products, createTransaction, updateProduct } = useContext(AppContext);
+  const history = useHistory();
+  const { products, createTransaction, updateProduct,getProducts } = useContext(AppContext);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [mobileCost, setMobileCost] = useState(null);
   const [instalments, setInstalments] = useState([]);
@@ -26,7 +26,9 @@ const Transaction = () => {
   const [updateSold, setUpdateSold] = useState()
 
 
-
+  useEffect(() => {
+    getProducts()
+  }, [])
   const [loading, setLoading] = useState(false);
 
 
@@ -50,69 +52,69 @@ const Transaction = () => {
 
   const instalmentArray = Array(12).fill();
 
-const createInstalment = (value, insDuration) => {
-  const total = Number(value || 0);
-  const advance = Number(advanceInstalment || 0);
-  const subCost = total - advance;
-  const monthly = subCost / (insDuration - 1);
+  const createInstalment = (value, insDuration) => {
+    const total = Number(value || 0);
+    const advance = Number(advanceInstalment || 0);
+    const subCost = total - advance;
+    const monthly = subCost / (insDuration - 1);
 
-  let arr = [];
-  let startDate = new Date();
+    let arr = [];
+    let startDate = new Date();
 
-  // Remaining installments (from month 1 onward)
-  for (let i = 1; i < insDuration; i++) {
-    let dueDate = new Date(startDate);
-    dueDate.setMonth(startDate.getMonth() + i);
+    // Remaining installments (from month 1 onward)
+    for (let i = 1; i < insDuration; i++) {
+      let dueDate = new Date(startDate);
+      dueDate.setMonth(startDate.getMonth() + i);
 
-    arr.push({
-      amount: monthly,
-      status: "Pending",
-      date: dueDate
-    });
-  }
+      arr.push({
+        amount: monthly,
+        status: "Pending",
+        date: dueDate
+      });
+    }
 
-  setInstalments(arr);
-  setInstalmentDuration(insDuration);
-};
-
-
-
-const handleSearch = (query) => {
-  setSearchQuery(query);
-
-  if (!query.trim()) {
-    // If input is empty or only spaces, hide all results
-    setFilteredProducts([]);
-    return;
-  }
-
-  // Filter products based on query
-  const filtered = products.filter(product =>
-    product.productName.toLowerCase().includes(query.toLowerCase()) ||
-    product.wholesalerName.toLowerCase().includes(query.toLowerCase()) ||
-    product.productType.toLowerCase().includes(query.toLowerCase())
-  );
-
-  // Show only first 3 matches
-  setFilteredProducts(filtered.slice(0, 3));
-};
-useEffect(() => {
-  if (mobileCost > 0 && advanceInstalment !== null) {
-    createInstalment(mobileCost, instalmentDuration);
-  }
-}, [advanceInstalment, mobileCost, instalmentDuration]);
+    setInstalments(arr);
+    setInstalmentDuration(insDuration);
+  };
 
 
 
-//   const handleSearch = (query) => {
-//     setSearchQuery(query);
-//     const filtered = products.filter(product =>
-//       product.productName.toLowerCase().includes(query.toLowerCase()) ||
-//       product.wholesalerName.toLowerCase().includes(query.toLowerCase()) ||
-//       product.productType.toLowerCase().includes(query.toLowerCase())
-//     );
-//     setFilteredProducts(filtered);
-//   };
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      // If input is empty or only spaces, hide all results
+      setFilteredProducts([]);
+      return;
+    }
+
+    // Filter products based on query
+    const filtered = products.filter(product =>
+      product.productName.toLowerCase().includes(query.toLowerCase()) ||
+      product.wholesalerName.toLowerCase().includes(query.toLowerCase()) ||
+      product.productType.toLowerCase().includes(query.toLowerCase())
+    );
+
+    // Show only first 3 matches
+    setFilteredProducts(filtered.slice(0, 3));
+  };
+  useEffect(() => {
+    if (mobileCost > 0 && advanceInstalment !== null) {
+      createInstalment(mobileCost, instalmentDuration);
+    }
+  }, [advanceInstalment, mobileCost, instalmentDuration]);
+
+
+
+  //   const handleSearch = (query) => {
+  //     setSearchQuery(query);
+  //     const filtered = products.filter(product =>
+  //       product.productName.toLowerCase().includes(query.toLowerCase()) ||
+  //       product.wholesalerName.toLowerCase().includes(query.toLowerCase()) ||
+  //       product.productType.toLowerCase().includes(query.toLowerCase())
+  //     );
+  //     setFilteredProducts(filtered);
+  //   };
 
   // Cloudinary upload (shared for user + granter)
   const cloudinaryImgUpload = async (file, setter, fieldName) => {
@@ -160,17 +162,17 @@ useEffect(() => {
   };
 
 
-    const notifyTrasactionCreation = () => {
-        toast.success("Transaction Created Successfully", {
-          position: "top-right",
-          autoClose: 3000, // time in ms
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      };
+  const notifyTrasactionCreation = () => {
+    toast.success("Transaction Created Successfully", {
+      position: "top-right",
+      autoClose: 3000, // time in ms
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
   const handleGranterChange = (e) => {
     const { name, value, files } = e.target;
@@ -183,11 +185,11 @@ useEffect(() => {
       }));
     }
   };
-  const updateProductToSold = ()=>{
+  const updateProductToSold = () => {
     const soldProduct = {
       ...Product,
       sold: true
-    } 
+    }
     updateProduct(Product._id, soldProduct)
   }
 
@@ -209,12 +211,12 @@ useEffect(() => {
       installmentPrice: mobileCost,
       date: startDate
     };
-updateProductToSold()
+    updateProductToSold()
     console.log("Transaction Object:", transactionObject);
 
     const txn = await createTransaction(transactionObject);
     setNewTxn(txn)
-    
+
     if (txn && txn._id) {
       history.push(`/dashboard/update-transactions/${txn._id}`); // ✅ redirect
     }
@@ -222,26 +224,26 @@ updateProductToSold()
     setLoading(false);
   };
 
-  
-  
+
+
 
   return (
     <div>
       <h1 className="px-4">Create Transaction</h1>
-      
+
       <div className="container-fluid p-4">
         <h3 className='py-4'>Payment Method</h3>
         <div className="d-flex">
-          <button 
+          <button
             // disabled={mobileCost <= 0 || loading} 
-            onClick={() => setPaymentMethod("instalments")} 
+            onClick={() => setPaymentMethod("instalments")}
             className={`btn ${paymentMethod === "instalments" ? "btn-primary" : "btn-outline-primary"} mx-2`}
           >
             Instalments
           </button>
-          <button 
+          <button
             // disabled={DeviceCash <= 0 || loading} 
-            onClick={() => setPaymentMethod("cash")} 
+            onClick={() => setPaymentMethod("cash")}
             className={`btn ${paymentMethod === "cash" ? "btn-primary" : "btn-outline-primary"} mx-2`}
           >
             Cash
@@ -256,97 +258,97 @@ updateProductToSold()
           <input name="image" onChange={handleUserChange} type="file" className="form-control" />
           <label className="input-group-text">User Image</label>
         </div>
-          {loading && <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>}
+        {loading && <span
+          className="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true"
+        ></span>}
         {userInfo.image && (
           <img src={userInfo.image} alt="User" style={{ maxWidth: "150px", borderRadius: "8px" }} />
         )}
-{paymentMethod === "instalments" && (<> 
-        <h3 className='py-4'>Guarantor Information</h3>
-        <input name="fullName" value={granterInfo.fullName} onChange={handleGranterChange} type="text" placeholder='Full Name' className="my-2 form-control" />
-        <input name="contactNumber" value={granterInfo.contactNumber} onChange={handleGranterChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
-        <input name="cnicNumber" value={granterInfo.cnicNumber} onChange={handleGranterChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />
-        <input name="address" value={granterInfo.address} onChange={handleGranterChange} type="text" placeholder='Address' className="my-2 form-control" />
-        <div className="input-group mb-3">
-          <input name="image" onChange={handleGranterChange} type="file" className="form-control" />
-          <label className="input-group-text">Guarantor Image</label>
-          {loading && <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                          ></span>}
-        {granterInfo.image && (
-          <img src={granterInfo.image} alt="Granter" style={{ maxWidth: "150px", borderRadius: "8px" }} />
-        )}
-        </div>
+        {paymentMethod === "instalments" && (<>
+          <h3 className='py-4'>Guarantor Information</h3>
+          <input name="fullName" value={granterInfo.fullName} onChange={handleGranterChange} type="text" placeholder='Full Name' className="my-2 form-control" />
+          <input name="contactNumber" value={granterInfo.contactNumber} onChange={handleGranterChange} type="tel" placeholder='Contact Number' className="my-2 form-control" />
+          <input name="cnicNumber" value={granterInfo.cnicNumber} onChange={handleGranterChange} type="tel" placeholder='CNIC Number' className="my-2 form-control" />
+          <input name="address" value={granterInfo.address} onChange={handleGranterChange} type="text" placeholder='Address' className="my-2 form-control" />
+          <div className="input-group mb-3">
+            <input name="image" onChange={handleGranterChange} type="file" className="form-control" />
+            <label className="input-group-text">Guarantor Image</label>
+            {loading && <span
+              className="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>}
+            {granterInfo.image && (
+              <img src={granterInfo.image} alt="Granter" style={{ maxWidth: "150px", borderRadius: "8px" }} />
+            )}
+          </div>
         </>)
-}
+        }
 
         <h3 className='py-4'>Product Type</h3>
-       <input 
-  type="text" 
-  placeholder="Search products..." 
-  value={searchQuery} 
-  onChange={(e) => handleSearch(e.target.value)}
-  className="form-control my-2"
-/>
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="form-control my-2"
+        />
 
-{/* Only show list if there is a search query and results */}
-{searchQuery.trim() && filteredProducts.length > 0 && (
-  <ul className="list-group my-2">
-    {filteredProducts.map(product => (
-      <li 
-        key={product._id} 
-        className={`list-group-item ${ProductType === product._id ? 'active' : ''}`}
-        onClick={() => {setProductType(product._id); setProductName(product.productName); setProduct(product); handleSearch("")}}
-        style={{ cursor: "pointer" }}
-      >
-        {product.productName} - {product.wholesalerName} ({product.productType})
-      </li>
-    ))}
-  </ul>
-)}
+        {/* Only show list if there is a search query and results */}
+        {searchQuery.trim() && filteredProducts.length > 0 && (
+          <ul className="list-group my-2">
+            {filteredProducts.map(product => (
+              <li
+                key={product._id}
+                className={`list-group-item ${ProductType === product._id ? 'active' : ''}`}
+                onClick={() => { setProductType(product._id); setProductName(product.productName); setProduct(product); handleSearch("") }}
+                style={{ cursor: "pointer" }}
+              >
+                {product.productName} - {product.wholesalerName} ({product.productType})
+              </li>
+            ))}
+          </ul>
+        )}
 
-{Product && (
-  <div className="list-group my-2">
-    <div 
-      className="list-group-item active d-flex justify-content-between align-items-center"
-      style={{ cursor: "pointer" }}
-    >
-      <span>
-  Product Name: <b>{Product.productName}</b> <br />
-  Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
-  Wholesaler Name: {Product.wholesalerName}
-</span>
+        {Product && (
+          <div className="list-group my-2">
+            <div
+              className="list-group-item active d-flex justify-content-between align-items-center"
+              style={{ cursor: "pointer" }}
+            >
+              <span>
+                Product Name: <b>{Product.productName}</b> <br />
+                Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
+                Wholesaler Name: {Product.wholesalerName}
+              </span>
 
-      <button 
-        type="button" 
-        className="btn-close" 
-        aria-label="Close"
-        onClick={() => {setProduct(null); setProductType(null)}} // your close handler
-        style={{ filter: "invert(38%) sepia(89%) saturate(7500%) hue-rotate(0deg) brightness(90%) contrast(120%)" }}
-      ></button>
-    </div>
-  </div>
-)}
+              <button
+                type="button"
+                className="btn-close"
+                aria-label="Close"
+                onClick={() => { setProduct(null); setProductType(null) }} // your close handler
+                style={{ filter: "invert(38%) sepia(89%) saturate(7500%) hue-rotate(0deg) brightness(90%) contrast(120%)" }}
+              ></button>
+            </div>
+          </div>
+        )}
 
 
         <h3 className='py-4'>{ProductName ? ProductName : "Product"} Information</h3>
         {paymentMethod === "instalments" && <input onChange={({ target: { value } }) => { setMobileCost(value); createInstalment(value, 12); if (value == 0) { setInstalments([]) } }} value={mobileCost} type="number" placeholder='Instalments Price' className="my-2 form-control" />}
-       <input onChange={({ target: { value } }) => setDeviceCash(value)} type="number" placeholder='Cash Price' className="my-2 form-control" />
+        <input onChange={({ target: { value } }) => setDeviceCash(value)} type="number" placeholder='Cash Price' className="my-2 form-control" />
         <textarea
           name="productDescription"
           placeholder="Product Details"
           className=" form-control"
-          onChange={({ target: { value } })=>{setProductDetails(value)}}
-          // required
+          onChange={({ target: { value } }) => { setProductDetails(value) }}
+        // required
         />
-        
 
-           {/* <textarea
+
+        {/* <textarea
           name="productDescription"
           placeholder="Product Description"
           className="mt-4 form-control"
@@ -354,31 +356,31 @@ updateProductToSold()
           // required
         /> */}
         {(paymentMethod === "instalments" && mobileCost > 0) &&
-        <>
-<h3 className='py-4'>Advance Instalments</h3>
+          <>
+            <h3 className='py-4'>Advance Instalments</h3>
 
-<input
-  onChange={({ target: { value } }) => {
-    setAdvanceInstalment(Number(value));
-    if (mobileCost > 0) {
-      createInstalment(mobileCost, instalmentDuration);
-    }
-  }}
-  type="number"
-  placeholder="Advance Inputs"
-  className="my-2 form-control"
-/>
+            <input
+              onChange={({ target: { value } }) => {
+                setAdvanceInstalment(Number(value));
+                if (mobileCost > 0) {
+                  createInstalment(mobileCost, instalmentDuration);
+                }
+              }}
+              type="number"
+              placeholder="Advance Inputs"
+              className="my-2 form-control"
+            />
 
-        </>
-}
+          </>
+        }
         {(paymentMethod === "instalments" && mobileCost > 0) &&
           <>
             <h3 className='py-4'>Instalments Duration</h3>
             <div className='py-4'>
               {instalmentArray.filter((e, i) => i !== 0).map((e, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => { createInstalment(mobileCost, i + 2) }} 
+                <button
+                  key={i}
+                  onClick={() => { createInstalment(mobileCost, i + 2) }}
                   className={`btn btn-${instalmentDuration === i + 2 ? "primary" : "outline-primary"} m-2`}
                 >
                   1 - {i + 2} Months
@@ -388,108 +390,113 @@ updateProductToSold()
           </>
         }
 
-<div className="py-4">
-  {(paymentMethod === "instalments" && mobileCost > 0) &&
-    instalments.map((e, i) => (
-      <div key={i} className="d-flex align-items-center">
-        <span className="px-2 fw-bold">{i + 1}</span>
+        <div className="py-4">
+          {(paymentMethod === "instalments" && mobileCost > 0) &&
+            instalments.map((e, i) => {
+              const dueDateStr = new Date(e.date).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
 
-        {/* Amount input */}
-         <input
-  type="number"
-  step="0.01"
-  value={e.amount === "" ? "" : e.amount}
-  onChange={(event) => {
-    const rawValue = event.target.value;
+              return (
+                <div key={i} className="card rounded-3 my-3 p-2">
+                  <div className="d-flex align-items-center w-100 mb-2 flex-md-row flex-column">
+                    {/* Index */}
+                    <span className="px-2 fw-bold d-block d-md-none">{i + 1} Month</span>
+                    <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
 
-    setInstalments((prev) => {
-      const updated = [...prev];
-      const oldValue = parseFloat(updated[i].amount) || 0;
+                    {/* Amount input */}
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={e.amount === "" ? "" : e.amount}
+                      onChange={(event) => {
+                        const rawValue = event.target.value;
 
-      // If input is empty, allow it without forcing to 0
-      if (rawValue === "") {
-        updated[i].amount = "";
-        return updated;
-      }
+                        setInstalments((prev) => {
+                          const updated = [...prev];
+                          const oldValue = parseFloat(updated[i].amount) || 0;
 
-      const value = parseFloat(rawValue);
-      const diff = value - oldValue;
-      updated[i].amount = value;
+                          // ✅ allow clearing the input completely
+                          if (rawValue === "") {
+                            updated[i].amount = "";
+                            return updated;
+                          }
 
-      // Distribute difference among other months
-      const others = updated.length - 1;
-      if (others > 0) {
-        const adjust = -diff / others;
-        for (let j = 0; j < updated.length; j++) {
-          if (j !== i && !isNaN(updated[j].amount)) {
-            updated[j].amount = parseFloat(
-              (updated[j].amount + adjust).toFixed(2)
-            );
-          }
-        }
-      }
+                          const value = parseFloat(rawValue);
+                          const diff = value - oldValue;
 
-      return updated;
-    });
-  }}
-  className="my-2 form-control w-100 w-md-auto"
-/>
+                          // ✅ set new amount
+                          updated[i].amount = value;
 
+                          // ✅ redistribute difference among other months
+                          const others = updated.length - 1;
+                          if (others > 0) {
+                            const adjust = -diff / others;
+                            for (let j = 0; j < updated.length; j++) {
+                              if (j !== i && !isNaN(updated[j].amount)) {
+                                updated[j].amount = parseFloat(
+                                  (parseFloat(updated[j].amount) + adjust).toFixed(2)
+                                );
+                              }
+                            }
+                          }
 
+                          return updated;
+                        });
+                      }}
+                      className="my-2 form-control w-100 w-md-auto"
+                    />
 
-        {/* Date input (default monthly, editable) */}
-        <input
-          type="date"
-          value={e.date ? new Date(e.date).toISOString().split("T")[0] : ""}
-          onChange={({ target: { value } }) => {
-            const updated = [...instalments];
-            updated[i].date = new Date(value);
-            setInstalments(updated);
-          }}
-          className="form-control mx-2"
-        />
+                    {/* Date (picker) */}
+                    <DatePicker
+                      selected={e.date ? new Date(e.date) : null}
+                      onChange={(date) => {
+                        const updated = [...instalments];
+                        updated[i].date = date;
+                        setInstalments(updated);
+                      }}
+                      dateFormat="dd-MM-yyyy"
+                      className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0"
+                      placeholderText="Select due date"
+                    />
 
-        {/* Status button */}
-        <button
-          type="button"
-          onClick={() => {
-            const updated = [...instalments];
-            updated[i].status = updated[i].status === "Paid" ? "Pending" : "Paid";
-            setInstalments(updated);
-          }}
-          className={`btn mx-2 ${
-            e.status === "Paid" ? "btn-success" : "btn-outline-success"
-          }`}
-        >
-          {e.status}
-        </button>
-      </div>
-    ))}
-</div>
+                    {/* Status toggle buttons */}
 
-<div>
-  <h4>Date</h4>
- <DatePicker className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
-</div>
+                  </div>
+
+                  {/* ✅ Status text below */}
+
+                </div>
+              );
+            })}
+
+        </div>
+
+        <div>
+          <h4>Date</h4>
+          <DatePicker   dateFormat="dd/MM/yyyy" className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+        </div>
 
 
         <div className="d-flex justify-content-end">
-          <button 
-            onClick={handleCreateTransaction} 
+          <button
+            onClick={handleCreateTransaction}
             className="btn btn-outline-success"
             disabled={loading}
           >
             {loading ? (
-              <span 
-                className="spinner-border spinner-border-sm me-2" 
-                role="status" 
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
                 aria-hidden="true"
               ></span>
             ) : "Create Transaction"}
           </button>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   )
 };

@@ -15,7 +15,7 @@ const [pdfData, setPdfdata] = useState(false);
 
 const loggedIn = async (username, password)=> {
   try {
-    const response = await fetch("http://localhost:8000/api/auth/login", {
+    const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -40,7 +40,7 @@ const loggedIn = async (username, password)=> {
 
 const getProducts = async () => {
     try {
-        const response = await fetch("http://localhost:8000/api/product/get-product/");
+        const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/get-product/");
         const data = await response.json(); // assuming your API returns JSON
             console.log("📦 API response:", data); 
         setProducts(data); // save all products
@@ -58,7 +58,7 @@ useEffect(() => {
 
 const createTransaction = async (transactionObject) => {
   try {
-    const response = await fetch("http://localhost:8000/api/transaction/create-transaction", {
+    const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/create-transaction", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -86,7 +86,7 @@ const createTransaction = async (transactionObject) => {
 
 const handleCreateProduct = async (formData) => {
   try {
-    const res = await fetch("http://localhost:8000/api/product/create-products", {
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/create-products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,7 +112,7 @@ const handleCreateProduct = async (formData) => {
 
    const fetchProduct = async (id) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/product/getproductbyid/${id}`);
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/getproductbyid/${id}`);
     if (!res.ok) throw new Error("Failed to fetch product");
     
     const data = await res.json();
@@ -127,7 +127,7 @@ const handleCreateProduct = async (formData) => {
 
 const updateProduct = async (id, updatedData) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/product/update-product/${id}`, {
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/update-product/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const updateProduct = async (id, updatedData) => {
 // inside AppContext (or wherever you keep your API functions)
 const deleteProduct = async (id) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/product/deleted-product/${id}`, {
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/deleted-product/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -182,7 +182,7 @@ const deleteProduct = async (id) => {
 // In AppContext or a service file
 const getTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-transactions", {
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-transactions", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -208,7 +208,7 @@ const getTransactions = async () => {
 // Get transaction by ID
 const getTransactionById = async (id) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/transaction/get-transaction/${id}`, {
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-transaction/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -232,7 +232,7 @@ const getTransactionById = async (id) => {
 
 const updateTransaction = async (id, updatedData) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/transaction/update-transactions/${id}`, {
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/update-transactions/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -256,7 +256,7 @@ const updateTransaction = async (id, updatedData) => {
 
  const deleteTransaction = async (id) => {
   try {
-    const res = await fetch(`http://localhost:8000/api/transaction/delete-transactions/${id}`, {
+    const res = await fetch(`https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/delete-transactions/${id}`, {
       method: "DELETE",
     });
 
@@ -275,7 +275,7 @@ const updateTransaction = async (id, updatedData) => {
 
 const getRecycledTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-recycled-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-recycled-transactions");
     const data = await res.json();
     if (data.success) {
       return data.transactions;
@@ -290,7 +290,7 @@ const getRecycledTransactions = async () => {
 // Fetch only cash transactions
 const getCashTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-cash-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-cash-transactions");
     const data = await res.json();
     if (data.success) {
       return data.transactions;
@@ -307,7 +307,7 @@ const getCashTransactions = async () => {
 // Fetch only instalment transactions
 const getInstalmentTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-instalment-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-instalment-transactions");
     const data = await res.json();
     if (data.success) {
       return data.transactions;
@@ -325,7 +325,7 @@ const getInstalmentTransactions = async () => {
 // ✅ Fetch instalments with at least 1 Pending
 const getPendingInstalmentTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-pending-instalment-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-pending-instalment-transactions");
     const data = await res.json();
     return data.success ? data.transactions : [];
   } catch (err) {
@@ -337,7 +337,7 @@ const getPendingInstalmentTransactions = async () => {
 // ✅ Fetch instalments fully paid
 const getFullyPaidInstalmentTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-fully-paid-instalment-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-fully-paid-instalment-transactions");
     const data = await res.json();
     return data.success ? data.transactions : [];
   } catch (err) {
@@ -349,7 +349,7 @@ const getFullyPaidInstalmentTransactions = async () => {
 // ✅ Fetch instalments with Due
 const getDueInstalmentTransactions = async () => {
   try {
-    const res = await fetch("http://localhost:8000/api/transaction/get-due-instalment-transactions");
+    const res = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/transaction/get-due-instalment-transactions");
     const data = await res.json();
     return data.success ? data.transactions : [];
   } catch (err) {
@@ -360,7 +360,7 @@ const getDueInstalmentTransactions = async () => {
 
 const fetchSoldProducts = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/product/get-sold-product"); 
+    const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/get-sold-product"); 
     // 👆 Replace with your backend URL if deployed
 
     if (!response.ok) {
@@ -374,13 +374,29 @@ const fetchSoldProducts = async () => {
     console.error("Error fetching sold products:", error);
   }
 };
+const fetchAllProducts = async () => {
+  try {
+    const response = await fetch("https://mobileinstalmentex-dot-arched-gear-433017-u9.de.r.appspot.com/api/product/get-all-products"); 
+    // 👆 Replace with your backend URL if deployed
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch sold products");
+    }
+
+    const data = await response.json();
+    console.log("All products:", data); // Shows all sold items
+    return data;
+  } catch (error) {
+    console.error("Error fetching sold products:", error);
+  }
+};
 
 
-  console.clear()
+  // console.clear()
 
     
     return (
-        <AppContext.Provider value={{helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, notify,setNotify, updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
+        <AppContext.Provider value={{fetchAllProducts,helloworld,fetchSoldProducts,getDueInstalmentTransactions,getPendingInstalmentTransactions,getFullyPaidInstalmentTransactions,getCashTransactions,getInstalmentTransactions, getRecycledTransactions,pdfData,getTransactions, deleteTransaction,updateTransaction,getTransactionById, notify,setNotify, updateProduct , deleteProduct,fetchProduct, product,handleCreateProduct, loggedIn, products, getProducts, products, createTransaction}}>
             {props.children}
         </AppContext.Provider>
     )

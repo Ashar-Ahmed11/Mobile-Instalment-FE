@@ -420,64 +420,64 @@ const UpdateTransaction = () => {
                           <span className="px-1 fw-bold d-none d-md-block">{i + 1}</span>
 
                           {/* Amount input */}
-                         <input
-  type="number"
-  step="0.01"
-  value={e.amount === "" ? "" : e.amount}
-  onChange={(event) => {
-    const rawValue = event.target.value;
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={e.amount === "" ? "" : e.amount}
+                            onChange={(event) => {
+                              const rawValue = event.target.value;
 
-    setInstalments((prev) => {
-      const updated = [...prev];
-      const oldValue = parseFloat(updated[i].amount) || 0;
+                              setInstalments((prev) => {
+                                const updated = [...prev];
+                                const oldValue = parseFloat(updated[i].amount) || 0;
 
-      // ✅ allow clearing the input completely
-      if (rawValue === "") {
-        updated[i].amount = "";
-        return updated;
-      }
+                                // ✅ allow clearing the input completely
+                                if (rawValue === "") {
+                                  updated[i].amount = "";
+                                  return updated;
+                                }
 
-      const value = parseFloat(rawValue);
-      const diff = value - oldValue;
+                                const value = parseFloat(rawValue);
+                                const diff = value - oldValue;
 
-      // ✅ set new amount
-      updated[i].amount = value;
+                                // ✅ set new amount
+                                updated[i].amount = value;
 
-      // ✅ redistribute difference among other months
-      const others = updated.length - 1;
-      if (others > 0) {
-        const adjust = -diff / others;
-        for (let j = 0; j < updated.length; j++) {
-          if (j !== i && !isNaN(updated[j].amount)) {
-            updated[j].amount = parseFloat(
-              (parseFloat(updated[j].amount) + adjust).toFixed(2)
-            );
-          }
-        }
-      }
+                                // ✅ redistribute difference among other months
+                                const others = updated.length - 1;
+                                if (others > 0) {
+                                  const adjust = -diff / others;
+                                  for (let j = 0; j < updated.length; j++) {
+                                    if (j !== i && !isNaN(updated[j].amount)) {
+                                      updated[j].amount = parseFloat(
+                                        (parseFloat(updated[j].amount) + adjust).toFixed(2)
+                                      );
+                                    }
+                                  }
+                                }
 
-      return updated;
-    });
-  }}
-  className="my-2 form-control w-100 w-md-auto"
-/>
+                                return updated;
+                              });
+                            }}
+                            className="my-2 form-control w-100 w-md-auto"
+                          />
 
 
                           {/* Date (read only) */}
-                           <DatePicker
-              selected={e.date ? new Date(e.date) : null}
-              onChange={(date) => {
-                const updated = [...instalments];
-                updated[i].date = date;
-                setInstalments(updated);
-              }}
-              dateFormat="dd-MM-yyyy"
-              className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0"
-              placeholderText="Select due date"
-            />
+                          <DatePicker
+                            selected={e.date ? new Date(e.date) : null}
+                            onChange={(date) => {
+                              const updated = [...instalments];
+                              updated[i].date = date;
+                              setInstalments(updated);
+                            }}
+                            dateFormat="dd-MM-yyyy"
+                            className="form-control mx-1 bg-light w-100 w-md-auto my-1 my-md-0"
+                            placeholderText="Select due date"
+                          />
 
                           {/* Status toggle */}
-                          <div className="d-flex">
+                          <div className="d-flex mx-2">
                             <button
                               type="button"
                               onClick={() => {
