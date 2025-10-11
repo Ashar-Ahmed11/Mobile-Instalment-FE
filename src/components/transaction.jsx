@@ -51,32 +51,42 @@ const Transaction = () => {
   });
 
   const instalmentArray = Array(12).fill();
+const createInstalment = (value, insDuration, selectedDate = startDate) => {
+  const total = Number(value || 0);
+  const advance = Number(advanceInstalment || 0);
+  const subCost = total - advance;
+  const monthly = subCost / (insDuration - 1);
 
-  const createInstalment = (value, insDuration) => {
-    const total = Number(value || 0);
-    const advance = Number(advanceInstalment || 0);
-    const subCost = total - advance;
-    const monthly = subCost / (insDuration - 1);
+  let arr = [];
 
-    let arr = [];
-    let startDate = new Date();
+  const baseDate = new Date(selectedDate); // <-- always fresh selected date
 
-    // Remaining installments (from month 1 onward)
-    for (let i = 1; i < insDuration; i++) {
-      let dueDate = new Date(startDate);
-      dueDate.setMonth(startDate.getMonth() + i);
+  for (let i = 1; i < insDuration; i++) {
+    const dueDate = new Date(
+      baseDate.getFullYear(),
+      baseDate.getMonth() + i,
+      baseDate.getDate()
+    );
 
-      arr.push({
-        amount: monthly,
-        status: "Pending",
-        date: dueDate
-      });
+    arr.push({
+      amount: monthly,
+      status: "Pending",
+      date: dueDate,
+    });
+  }
+
+  setInstalments(arr);
+  setInstalmentDuration(insDuration);
+};
+
+  useEffect(() => {
+    if (mobileCost > 0 && advanceInstalment !== null) {
+      createInstalment(mobileCost, instalmentDuration);
     }
+  }, [advanceInstalment, mobileCost, instalmentDuration, startDate]);
 
-    setInstalments(arr);
-    setInstalmentDuration(insDuration);
-  };
 
+  console.log(startDate);
 
 
   const handleSearch = (query) => {
@@ -226,11 +236,11 @@ const Transaction = () => {
 
   const convertData = (isoDate) => {
     const date = new Date(isoDate);
-    return date.getDate()  + '-' +  (date.getMonth() + 1) + '-' + date.getFullYear()
+    return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear()
   }
 
   console.log(Product);
-  
+
   return (
     <div>
       <h1 className="px-4">Create Transaction</h1>
@@ -310,7 +320,7 @@ const Transaction = () => {
                 onClick={() => { setProductType(product._id); setProductName(product.productName); setProduct(product); handleSearch("") }}
                 style={{ cursor: "pointer" }}
               >
-                {product.productName} - {product.wholesalerName} ({product.productType}) <br/> Date: {convertData(product.date)}
+                {product.productName} - {product.wholesalerName} ({product.productType}) <br /> Date: {convertData(product.date)}
               </li>
             ))}
           </ul>

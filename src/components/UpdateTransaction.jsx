@@ -48,8 +48,7 @@ const UpdateTransaction = () => {
   const instalmentArray = Array(12).fill();
 
   // ✅ fetch transaction details on mount
-  useEffect(() => {
-    const fetchTransaction = async () => {
+  const fetchTransaction = async () => {
       try {
         setLoading(true);
         const txn = await getTransactionById(id);
@@ -93,6 +92,8 @@ const UpdateTransaction = () => {
         setLoading(false);
       }
     };
+  useEffect(() => {
+    
 
     fetchTransaction();
   }, [id]);
@@ -221,6 +222,7 @@ const UpdateTransaction = () => {
 
     //  createTransaction(transactionObject);
     await updateTransaction(id, transactionObject)
+    await fetchTransaction()
     setLoading(false);
   };
 
