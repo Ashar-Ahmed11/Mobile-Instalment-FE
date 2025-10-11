@@ -9,7 +9,8 @@ const UpdateTransaction = () => {
   const { id } = useParams(); // ✅ get transaction id from URL
   const history = useHistory()
   const { products, deleteTransaction, getTransactionById, updateTransaction } = useContext(AppContext);
-
+      const [startDate, setStartDate] = useState(new Date());
+    
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [mobileCost, setMobileCost] = useState(null);
   const [modal, setModal] = useState(false)
@@ -49,51 +50,52 @@ const UpdateTransaction = () => {
 
   // ✅ fetch transaction details on mount
   const fetchTransaction = async () => {
-      try {
-        setLoading(true);
-        const txn = await getTransactionById(id);
-        setAdvanceInstalment(txn.advanceInstalment)
-        setTxn(txn)
+    try {
+      setLoading(true);
+      const txn = await getTransactionById(id);
+      setAdvanceInstalment(txn.advanceInstalment)
+      setTxn(txn)
 
-        console.log("Transaction fetched:", txn);
+      console.log("Transaction fetched:", txn);
 
-        if (txn) {
-          // Prefill user info
-          setUserInfo({
-            fullName: txn.fullName || "",
-            contactNumber: txn.contactNumber || "",
-            cnicNumber: txn.cnicNumber || "",
-            address: txn.address || "",
-            image: txn.image || null,
-          });
+      if (txn) {
+        // Prefill user info
+        setUserInfo({
+          fullName: txn.fullName || "",
+          contactNumber: txn.contactNumber || "",
+          cnicNumber: txn.cnicNumber || "",
+          address: txn.address || "",
+          image: txn.image || null,
+        });
 
-          // Prefill granter info
-          setGranterInfo({
-            fullName: txn.granterFullName || "",
-            contactNumber: txn.granterContactNumber || "",
-            cnicNumber: txn.granterCnicNumber || "",
-            address: txn.granterAddress || "",
-            image: txn.granterImage || null,
-          });
+        // Prefill granter info
+        setGranterInfo({
+          fullName: txn.granterFullName || "",
+          contactNumber: txn.granterContactNumber || "",
+          cnicNumber: txn.granterCnicNumber || "",
+          address: txn.granterAddress || "",
+          image: txn.granterImage || null,
+        });
 
-          // Prefill product & payment info
-          setProductType(txn.productType);
-          setProduct(txn.productType);
-          setPaymentMethod(txn.transactionType || "cash");
-          setInstalments(txn.installments || []);
-          setDeviceCash(txn.cashPrice || null);
-          setMobileCost(txn.installmentPrice || null);
-          setInstalmentDuration(txn.installments?.length || 12);
-          setProductDetails(txn.productDetails || null);
-        }
-      } catch (err) {
-        console.error("Error fetching transaction:", err);
-      } finally {
-        setLoading(false);
+        // Prefill product & payment info
+        setProductType(txn.productType);
+        setProduct(txn.productType);
+        setStartDate(txn.date)
+        setPaymentMethod(txn.transactionType || "cash");
+        setInstalments(txn.installments || []);
+        setDeviceCash(txn.cashPrice || null);
+        setMobileCost(txn.installmentPrice || null);
+        setInstalmentDuration(txn.installments?.length || 12);
+        setProductDetails(txn.productDetails || null);
       }
-    };
+    } catch (err) {
+      console.error("Error fetching transaction:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    
+
 
     fetchTransaction();
   }, [id]);
@@ -215,7 +217,7 @@ const UpdateTransaction = () => {
       cashPrice: DeviceCash,
       installmentPrice: mobileCost,
       recycled: forceRecycle,
-      date: new Date(),
+      date: startDate,
     };
 
     console.log("Transaction Object:", transactionObject);
@@ -568,7 +570,10 @@ const UpdateTransaction = () => {
                 })}
             </div>
 
-
+            <div>
+              <h4>Date</h4>
+              <DatePicker dateFormat="dd/MM/yyyy" className='form-control' selected={startDate} onChange={(date) => setStartDate(date)} />
+            </div>
 
             <div className="d-flex justify-content-end">
               <button
