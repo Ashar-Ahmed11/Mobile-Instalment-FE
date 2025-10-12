@@ -86,7 +86,7 @@ const Home = () => {
     const cashProfit = () => {
         let cashTransactions = transactions.filter((e) => { return e.transactionType == "cash" })
         let sumWithInitial = cashTransactions.reduce(
-            (accumulator, currentValue) => accumulator + ( currentValue.cashPrice-currentValue.productType.wholesalePrice ),
+            (accumulator, currentValue) => accumulator + ( currentValue.cashPrice-currentValue.productType?.wholesalePrice || 0 ),
             0,
         );
 
@@ -95,7 +95,7 @@ const Home = () => {
     const instalmentProfit = () => {
         let instalmentTransactions = transactions.filter((e) => { return e.transactionType !== "cash" })
         let sumWithInitial = instalmentTransactions.reduce(
-            (accumulator, currentValue) => accumulator + (currentValue.installmentPrice - currentValue.productType.wholesalePrice ),
+            (accumulator, currentValue) => accumulator + (currentValue.installmentPrice - currentValue.productType?.wholesalePrice || 0 ),
             0,
         );
 
