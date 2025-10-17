@@ -4,13 +4,13 @@ import AppContext from "./context/appContext";
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 const UpdateTransaction = () => {
   const { id } = useParams(); // ✅ get transaction id from URL
   const history = useHistory()
   const { products, deleteTransaction, getTransactionById, updateTransaction } = useContext(AppContext);
-      const [startDate, setStartDate] = useState(new Date());
-    
+  const [startDate, setStartDate] = useState(new Date());
+
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [mobileCost, setMobileCost] = useState(null);
   const [modal, setModal] = useState(false)
@@ -309,13 +309,13 @@ const UpdateTransaction = () => {
                   className="list-group-item active d-flex justify-content-between align-items-center"
                   style={{ cursor: "pointer" }}
                 >
-                  <span>
+                  <Link target="_blank" style={{textDecoration:"none",color:"white"}} to={`/dashboard/update-products/${Product._id}`}><span>
                     Product Name: <b>{Product.productName}</b> <br />
                     Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
                     Wholesaler Name: {Product.wholesalerName} <br />
                     Date: {convertData(Product.date)}
                   </span>
-
+                  </Link>
                   <button
                     type="button"
                     className="btn-close"

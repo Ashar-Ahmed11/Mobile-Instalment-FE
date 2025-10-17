@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router-dom";
-
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 const Transaction = () => {
   const history = useHistory();
   const { products, createTransaction, updateProduct, getProducts } = useContext(AppContext);
@@ -51,33 +51,33 @@ const Transaction = () => {
   });
 
   const instalmentArray = Array(12).fill();
-const createInstalment = (value, insDuration, selectedDate = startDate) => {
-  const total = Number(value || 0);
-  const advance = Number(advanceInstalment || 0);
-  const subCost = total - advance;
-  const monthly = subCost / (insDuration - 1);
+  const createInstalment = (value, insDuration, selectedDate = startDate) => {
+    const total = Number(value || 0);
+    const advance = Number(advanceInstalment || 0);
+    const subCost = total - advance;
+    const monthly = subCost / (insDuration - 1);
 
-  let arr = [];
+    let arr = [];
 
-  const baseDate = new Date(selectedDate); // <-- always fresh selected date
+    const baseDate = new Date(selectedDate); // <-- always fresh selected date
 
-  for (let i = 1; i < insDuration; i++) {
-    const dueDate = new Date(
-      baseDate.getFullYear(),
-      baseDate.getMonth() + i,
-      baseDate.getDate()
-    );
+    for (let i = 1; i < insDuration; i++) {
+      const dueDate = new Date(
+        baseDate.getFullYear(),
+        baseDate.getMonth() + i,
+        baseDate.getDate()
+      );
 
-    arr.push({
-      amount: monthly,
-      status: "Pending",
-      date: dueDate,
-    });
-  }
+      arr.push({
+        amount: monthly,
+        status: "Pending",
+        date: dueDate,
+      });
+    }
 
-  setInstalments(arr);
-  setInstalmentDuration(insDuration);
-};
+    setInstalments(arr);
+    setInstalmentDuration(insDuration);
+  };
 
   useEffect(() => {
     if (mobileCost > 0 && advanceInstalment !== null) {
@@ -332,13 +332,13 @@ const createInstalment = (value, insDuration, selectedDate = startDate) => {
               className="list-group-item active d-flex justify-content-between align-items-center"
               style={{ cursor: "pointer" }}
             >
-              <span>
+              <Link target="_blank" style={{ textDecoration: "none", color: "white" }} to={`/dashboard/update-products/${Product._id}`}><span>
                 Product Name: <b>{Product.productName}</b> <br />
                 Wholesale Price: {Product.wholesalePrice.toLocaleString("en-US")} <br />
                 Wholesaler Name: {Product.wholesalerName}<br />
                 Date: {convertData(Product.date)}
               </span>
-
+              </Link>
               <button
                 type="button"
                 className="btn-close"
