@@ -52,7 +52,7 @@ function Pdf() {
         {/* Title */}
         <div className="text-center mb-2">
           <h1 className="fw-bold h3 pt-2">Kamran Mobile Zone & Electronics</h1>
-          <p>شاپ نمبر 39، فرسٹ فلور المسلم پلازہ,<br />ترانفارمر چوک، صادق آباد، راولپنڈی</p>
+          <p>Shop No.39, First floor, Al-Muslim Mobile Market<br />Transformer Chowk, Sadiqabad, Rawalpindi</p>
           <p style={{ fontSize: "13px" }}>Ph: 0312-9071455, 0330-6033470</p>
         </div>
 
